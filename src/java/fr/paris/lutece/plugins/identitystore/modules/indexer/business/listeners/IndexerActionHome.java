@@ -68,6 +68,15 @@ public final class IndexerActionHome
         _dao.insert( indexerAction, _plugin );
     }
 
+    /**
+     * Creation of a list of IndexerAction
+     * @param listIndexerActions The list of the indexer actions
+     */
+    public static synchronized void createAll( List<IndexerAction> listIndexerActions )
+    {
+        _dao.insertAll( listIndexerActions, _plugin );
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     // Finders
 

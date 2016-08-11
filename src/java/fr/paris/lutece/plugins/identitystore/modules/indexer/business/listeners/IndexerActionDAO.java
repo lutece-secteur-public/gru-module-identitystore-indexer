@@ -53,6 +53,8 @@ public final class IndexerActionDAO implements IIndexerActionDAO
     private static final String SQL_QUERY_NEW_PK = "SELECT max( id_action ) FROM grusupply_customer_indexer_action";
     private static final String SQL_QUERY_INSERT = "INSERT INTO grusupply_customer_indexer_action( id_action,id_customer,id_task)" +
         " VALUES(?,?,?)";
+    private static final String SQL_QUERY_INSERT_ALL = "INSERT INTO grusupply_customer_indexer_action( id_action,id_customer,id_task) VALUES";
+    private static final String SQL_QUERY_INSERT_ALL_VALUES = " (?,?,?),";
     private static final String SQL_QUERY_SELECT = "SELECT id_action,id_customer,id_task" +
         " FROM grusupply_customer_indexer_action  ";
     private static final String SQL_FILTER_ID_TASK = " id_task = ? ";
@@ -91,6 +93,46 @@ public final class IndexerActionDAO implements IIndexerActionDAO
 
         indexerAction.setIdAction( newPrimaryKey( plugin ) );
         daoUtil.setInt( 1, indexerAction.getIdAction(  ) );
+
+        daoUtil.executeUpdate(  );
+
+        daoUtil.free(  );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public synchronized void insertAll( List<IndexerAction> listIndexerActions, Plugin plugin )
+    {
+        if ( ( listIndexerActions == null ) || listIndexerActions.isEmpty(  ) )
+        {
+            return;
+        }
+
+        StringBuilder sbQuery = new StringBuilder( SQL_QUERY_INSERT_ALL );
+        int nIdAction = newPrimaryKey( plugin );
+
+        // First, builds the query
+        for ( int i = 0; i < listIndexerActions.size(  ); i++ )
+        {
+            sbQuery.append( SQL_QUERY_INSERT_ALL_VALUES );
+        }
+
+        // Removes trailing comma
+        sbQuery.deleteCharAt( sbQuery.length(  ) - 1 );
+
+        DAOUtil daoUtil = new DAOUtil( sbQuery.toString(  ), plugin );
+
+        int nIndex = 1;
+
+        // Secondly, injects the parameters
+        for ( IndexerAction indexerAction : listIndexerActions )
+        {
+            daoUtil.setInt( nIndex++, nIdAction++ );
+            daoUtil.setInt( nIndex++, indexerAction.getIdCustomer(  ) );
+            daoUtil.setInt( nIndex++, indexerAction.getIdTask(  ) );
+        }
 
         daoUtil.executeUpdate(  );
 

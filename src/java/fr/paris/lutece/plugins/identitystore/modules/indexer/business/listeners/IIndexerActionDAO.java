@@ -62,6 +62,14 @@ public interface IIndexerActionDAO
     void insert( IndexerAction indexerAction, Plugin plugin );
 
     /**
+     * Inserts in the table all the indexer actions contained in the specified list.
+     *
+     * @param listIndexerActions the list of the IndexerAction objects to insert
+     * @param plugin the plugin
+     */
+    void insertAll( List<IndexerAction> listIndexerActions, Plugin plugin );
+
+    /**
      * Loads the data of all indexerAction and returns them in a list
      * @param filter the search filter
      * @param plugin the plugin

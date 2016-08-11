@@ -23,6 +23,14 @@
 
     <!-- Admin features parameters -->
     <admin-features>
+        <admin-feature>
+            <feature-id>INDENTITY_STORE_INDEXER_INDEX_IDENTITIES</feature-id>
+            <feature-title>module.identitystore.indexer.adminFeature.index.identities.name</feature-title>
+            <feature-description>module.identitystore.indexer.adminFeature.index.identities.description</feature-description>
+            <feature-level>1</feature-level>
+            <feature-url>jsp/admin/plugins/identitystore/modules/indexer/IndexIdentities.jsp</feature-url>
+            <feature-icon-url></feature-icon-url>
+        </admin-feature>
     </admin-features>    
     
     
