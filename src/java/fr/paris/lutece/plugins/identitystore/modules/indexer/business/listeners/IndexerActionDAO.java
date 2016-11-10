@@ -88,7 +88,7 @@ public final class IndexerActionDAO implements IIndexerActionDAO
     public synchronized void insert( IndexerAction indexerAction, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
-        daoUtil.setInt( 2, indexerAction.getIdCustomer(  ) );
+        daoUtil.setString( 2, indexerAction.getIdCustomer(  ) );
         daoUtil.setInt( 3, indexerAction.getIdTask(  ) );
 
         indexerAction.setIdAction( newPrimaryKey( plugin ) );
@@ -130,7 +130,7 @@ public final class IndexerActionDAO implements IIndexerActionDAO
         for ( IndexerAction indexerAction : listIndexerActions )
         {
             daoUtil.setInt( nIndex++, nIdAction++ );
-            daoUtil.setInt( nIndex++, indexerAction.getIdCustomer(  ) );
+            daoUtil.setString( nIndex++, indexerAction.getIdCustomer(  ) );
             daoUtil.setInt( nIndex++, indexerAction.getIdTask(  ) );
         }
 
@@ -173,7 +173,7 @@ public final class IndexerActionDAO implements IIndexerActionDAO
 
         if ( filter.containsIdCustomer(  ) )
         {
-            daoUtil.setInt( nIndex, filter.getIdCustomer(  ) );
+            daoUtil.setString( nIndex, filter.getIdCustomer(  ) );
         }
 
         daoUtil.executeQuery(  );
@@ -182,7 +182,7 @@ public final class IndexerActionDAO implements IIndexerActionDAO
         {
             indexerAction = new IndexerAction(  );
             indexerAction.setIdAction( daoUtil.getInt( 1 ) );
-            indexerAction.setIdCustomer( daoUtil.getInt( 2 ) );
+            indexerAction.setIdCustomer( daoUtil.getString( 2 ) );
             indexerAction.setIdTask( daoUtil.getInt( 3 ) );
 
             indexerActionList.add( indexerAction );

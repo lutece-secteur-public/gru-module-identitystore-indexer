@@ -98,13 +98,13 @@ public class IndexingJspBean extends MVCAdminJspBean
     @Action( ACTION_INDEX_IDENTITIES )
     public String doIndexIdentities( HttpServletRequest request )
     {
-        List<Integer> listCustomerIds = IdentityHome.getCustomerIdsList(  );
+        List<String> listCustomerIds = IdentityHome.getCustomerIdsList(  );
         List<IndexerAction> listIndexerActions = new ArrayList<IndexerAction>( listCustomerIds.size(  ) );
 
-        for ( Integer nCustomerId : listCustomerIds )
+        for ( String strCustomerId : listCustomerIds )
         {
             IndexerAction indexerAction = new IndexerAction(  );
-            indexerAction.setIdCustomer( nCustomerId );
+            indexerAction.setIdCustomer( strCustomerId );
             indexerAction.setIdTask( AttributeChangeType.UPDATE.getValue(  ) );
 
             listIndexerActions.add( indexerAction );

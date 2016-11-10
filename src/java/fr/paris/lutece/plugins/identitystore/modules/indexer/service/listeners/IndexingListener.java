@@ -59,17 +59,17 @@ public class IndexingListener implements AttributeChangeListener
     @Override
     public void processAttributeChange( AttributeChange change )
     {
-        int nIdCustomer = change.getCustomerId(  );
+        String strIdCustomer = change.getCustomerId(  );
 
         IndexerActionFilter filter = new IndexerActionFilter(  );
-        filter.setIdCustomer( nIdCustomer );
+        filter.setIdCustomer( strIdCustomer );
 
         List<IndexerAction> listIndexerActions = IndexerActionHome.getList( filter );
 
         if ( listIndexerActions.isEmpty(  ) )
         {
             IndexerAction indexerAction = new IndexerAction(  );
-            indexerAction.setIdCustomer( nIdCustomer );
+            indexerAction.setIdCustomer( strIdCustomer );
             indexerAction.setIdTask( change.getChangeType(  ).getValue(  ) );
 
             IndexerActionHome.create( indexerAction );

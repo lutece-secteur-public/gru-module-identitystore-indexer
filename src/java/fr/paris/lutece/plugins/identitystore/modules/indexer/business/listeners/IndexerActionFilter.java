@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.identitystore.modules.indexer.business.listeners;
 
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -46,7 +47,9 @@ public class IndexerActionFilter
      */
     public static final int ALL_INT = -1;
     private int _nIdTask = ALL_INT;
-    private int _nIdCustomer = ALL_INT;
+    
+    public static final String NO_CUSTOMER = StringUtils.EMPTY;
+    private String _strIdCustomer = NO_CUSTOMER;
 
     /**
      * Gets the task id
@@ -77,20 +80,20 @@ public class IndexerActionFilter
 
     /**
      * Gets the customer id
-     * @return the customer is
+     * @return the customer id
      */
-    public int getIdCustomer(  )
+    public String getIdCustomer(  )
     {
-        return _nIdCustomer;
+        return _strIdCustomer;
     }
 
     /**
      * Sets the customer id
-     * @param nIdCustomer the customer id to insert in the filter
+     * @param strIdCustomer the customer id to insert in the filter
      */
-    public void setIdCustomer( int nIdCustomer )
+    public void setIdCustomer( String strIdCustomer )
     {
-        this._nIdCustomer = nIdCustomer;
+        this._strIdCustomer = strIdCustomer;
     }
 
     /**
@@ -99,6 +102,6 @@ public class IndexerActionFilter
      */
     public boolean containsIdCustomer(  )
     {
-        return ( _nIdCustomer != ALL_INT );
+        return (! NO_CUSTOMER.equals( _strIdCustomer ) );
     }
 }
