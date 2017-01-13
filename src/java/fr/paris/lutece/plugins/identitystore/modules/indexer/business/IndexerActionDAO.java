@@ -31,7 +31,7 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.identitystore.modules.indexer.business.listeners;
+package fr.paris.lutece.plugins.identitystore.modules.indexer.business;
 
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.sql.DAOUtil;
@@ -50,16 +50,19 @@ public final class IndexerActionDAO implements IIndexerActionDAO
     public static final String CONSTANT_AND = " AND ";
 
     // Constants
-    private static final String SQL_QUERY_NEW_PK = "SELECT max( id_action ) FROM grusupply_customer_indexer_action";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO grusupply_customer_indexer_action( id_action,id_customer,id_task)" +
+    private static final String SQL_QUERY_NEW_PK = "SELECT max( id_action ) FROM identitystore_identity_indexer_action";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO identitystore_identity_indexer_action( id_action,id_customer,id_task)" +
         " VALUES(?,?,?)";
-    private static final String SQL_QUERY_INSERT_ALL = "INSERT INTO grusupply_customer_indexer_action( id_action,id_customer,id_task) VALUES";
+    private static final String SQL_QUERY_INSERT_ALL = "INSERT INTO identitystore_identity_indexer_action( id_action,id_customer,id_task) VALUES";
     private static final String SQL_QUERY_INSERT_ALL_VALUES = " (?,?,?),";
     private static final String SQL_QUERY_SELECT = "SELECT id_action,id_customer,id_task" +
-        " FROM grusupply_customer_indexer_action  ";
+        " FROM identitystore_identity_indexer_action  ";
+    private static final String SQL_QUERY_DELETE = "DELETE FROM identitystore_identity_indexer_action WHERE id_action = ? ";
     private static final String SQL_FILTER_ID_TASK = " id_task = ? ";
     private static final String SQL_FILTER_ID_CUSTOMER = " id_customer = ? ";
 
+    
+    
     /**
      * {@inheritDoc}
      */
@@ -87,11 +90,12 @@ public final class IndexerActionDAO implements IIndexerActionDAO
     @Override
     public synchronized void insert( IndexerAction indexerAction, Plugin plugin )
     {
+        int nIdAction = newPrimaryKey( plugin );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, plugin );
-        daoUtil.setString( 2, indexerAction.getIdCustomer(  ) );
-        daoUtil.setInt( 3, indexerAction.getIdTask(  ) );
+        daoUtil.setString( 2, indexerAction.getCustomerId(  ) );
+        daoUtil.setInt( 3, indexerAction.getTask(  ).getValue(  ) );
 
-        indexerAction.setIdAction( newPrimaryKey( plugin ) );
+        indexerAction.setIdAction( nIdAction );
         daoUtil.setInt( 1, indexerAction.getIdAction(  ) );
 
         daoUtil.executeUpdate(  );
@@ -130,12 +134,24 @@ public final class IndexerActionDAO implements IIndexerActionDAO
         for ( IndexerAction indexerAction : listIndexerActions )
         {
             daoUtil.setInt( nIndex++, nIdAction++ );
-            daoUtil.setString( nIndex++, indexerAction.getIdCustomer(  ) );
-            daoUtil.setInt( nIndex++, indexerAction.getIdTask(  ) );
+            daoUtil.setString( nIndex++, indexerAction.getCustomerId(  ) );
+            daoUtil.setInt( nIndex++, indexerAction.getTask(  ).getValue(  ) );
         }
 
         daoUtil.executeUpdate(  );
 
+        daoUtil.free(  );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void delete( int nId, Plugin plugin )
+    {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin );
+        daoUtil.setInt( 1, nId );
+        daoUtil.executeUpdate(  );
         daoUtil.free(  );
     }
 
@@ -149,12 +165,12 @@ public final class IndexerActionDAO implements IIndexerActionDAO
         IndexerAction indexerAction = null;
         List<String> listStrFilter = new ArrayList<String>(  );
 
-        if ( filter.containsIdTask(  ) )
+        if ( filter.containsTask(  ) )
         {
             listStrFilter.add( SQL_FILTER_ID_TASK );
         }
 
-        if ( filter.containsIdCustomer(  ) )
+        if ( filter.containsCustomerId(  ) )
         {
             listStrFilter.add( SQL_FILTER_ID_CUSTOMER );
         }
@@ -165,15 +181,15 @@ public final class IndexerActionDAO implements IIndexerActionDAO
 
         int nIndex = 1;
 
-        if ( filter.containsIdTask(  ) )
+        if ( filter.containsTask(  ) )
         {
-            daoUtil.setInt( nIndex, filter.getIdTask(  ) );
+            daoUtil.setInt( nIndex, filter.getIndexerTask(  ).getValue(  ) );
             nIndex++;
         }
 
-        if ( filter.containsIdCustomer(  ) )
+        if ( filter.containsCustomerId(  ) )
         {
-            daoUtil.setString( nIndex, filter.getIdCustomer(  ) );
+            daoUtil.setString( nIndex, filter.getCustomerId(  ) );
         }
 
         daoUtil.executeQuery(  );
@@ -182,8 +198,8 @@ public final class IndexerActionDAO implements IIndexerActionDAO
         {
             indexerAction = new IndexerAction(  );
             indexerAction.setIdAction( daoUtil.getInt( 1 ) );
-            indexerAction.setIdCustomer( daoUtil.getString( 2 ) );
-            indexerAction.setIdTask( daoUtil.getInt( 3 ) );
+            indexerAction.setCustomerId( daoUtil.getString( 2 ) );
+            indexerAction.setTask( IndexerTask.valueOf( daoUtil.getInt( 3 ) ) );
 
             indexerActionList.add( indexerAction );
         }

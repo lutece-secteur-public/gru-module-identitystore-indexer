@@ -42,6 +42,15 @@
     <portlets>
    	</portlets>
     
+    <!-- Daemons -->
+    <daemons>
+        <daemon>
+            <daemon-id>identityIndexerDaemon</daemon-id>
+            <daemon-name>module.identitystore.indexer.daemon.identityIndexerDaemon.name</daemon-name>
+            <daemon-description>module.identitystore.indexer.daemon.identityIndexerDaemon.description</daemon-description>
+            <daemon-class>fr.paris.lutece.plugins.identitystore.modules.indexer.service.daemon.IdentityIndexerDaemon</daemon-class>
+        </daemon>
+    </daemons>
     
 	<!-- Specific plugin Javascript files -->
     <javascript-files>

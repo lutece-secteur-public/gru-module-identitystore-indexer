@@ -33,20 +33,23 @@
  */
 package fr.paris.lutece.plugins.identitystore.modules.indexer.service.listeners;
 
-import fr.paris.lutece.plugins.identitystore.modules.indexer.business.listeners.IndexerAction;
-import fr.paris.lutece.plugins.identitystore.modules.indexer.business.listeners.IndexerActionFilter;
-import fr.paris.lutece.plugins.identitystore.modules.indexer.business.listeners.IndexerActionHome;
-import fr.paris.lutece.plugins.identitystore.service.AttributeChange;
-import fr.paris.lutece.plugins.identitystore.service.AttributeChangeListener;
-
 import java.util.List;
+
+import fr.paris.lutece.plugins.identitystore.modules.indexer.business.IndexerAction;
+import fr.paris.lutece.plugins.identitystore.modules.indexer.business.IndexerActionFilter;
+import fr.paris.lutece.plugins.identitystore.modules.indexer.business.IndexerActionHome;
+import fr.paris.lutece.plugins.identitystore.modules.indexer.business.IndexerTask;
+import fr.paris.lutece.plugins.identitystore.modules.indexer.service.IndexService;
+import fr.paris.lutece.plugins.identitystore.service.IdentityChange;
+import fr.paris.lutece.plugins.identitystore.service.IdentityChangeListener;
+import fr.paris.lutece.util.httpaccess.HttpAccessException;
 
 
 /**
  * This class is a listener for indexing an identity when a attribute changes
  *
  */
-public class IndexingListener implements AttributeChangeListener
+public class IndexingListener implements IdentityChangeListener
 {
     private static final String SERVICE_NAME = "Identity indexing listener";
 
@@ -57,22 +60,29 @@ public class IndexingListener implements AttributeChangeListener
     }
 
     @Override
-    public void processAttributeChange( AttributeChange change )
+    public void processIdentityChange( IdentityChange identityChange )
     {
-        String strIdCustomer = change.getCustomerId(  );
-
-        IndexerActionFilter filter = new IndexerActionFilter(  );
-        filter.setIdCustomer( strIdCustomer );
-
-        List<IndexerAction> listIndexerActions = IndexerActionHome.getList( filter );
-
-        if ( listIndexerActions.isEmpty(  ) )
+        try
         {
-            IndexerAction indexerAction = new IndexerAction(  );
-            indexerAction.setIdCustomer( strIdCustomer );
-            indexerAction.setIdTask( change.getChangeType(  ).getValue(  ) );
+            IndexService.instance(  ).index( identityChange );
+        }
+        catch ( HttpAccessException ex )
+        {
+            String strIdCustomer = identityChange.getIdentity( ).getCustomerId(  );
 
-            IndexerActionHome.create( indexerAction );
+            IndexerActionFilter filter = new IndexerActionFilter(  );
+            filter.setCustomerId( strIdCustomer );
+
+            List<IndexerAction> listIndexerActions = IndexerActionHome.getList( filter );
+
+            if ( listIndexerActions.isEmpty(  ) )
+            {
+                IndexerAction indexerAction = new IndexerAction(  );
+                indexerAction.setCustomerId( strIdCustomer );
+                indexerAction.setTask( IndexerTask.valueOf( identityChange.getChangeType( ).getValue(  ) )  );
+
+                IndexerActionHome.create( indexerAction );
+            }
         }
     }
 }

@@ -31,49 +31,21 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.identitystore.modules.indexer.business.listeners;
+package fr.paris.lutece.plugins.identitystore.modules.indexer.service;
 
-import fr.paris.lutece.portal.service.plugin.Plugin;
-
-import java.util.List;
+import fr.paris.lutece.plugins.identitystore.service.IdentityChange;
+import fr.paris.lutece.util.httpaccess.HttpAccessException;
 
 
 /**
- *
- * Interface for an IndexerActionDAO
- *
+ * This interface enables to index entities
  */
-public interface IIndexerActionDAO
+public interface IIndexService 
 {
     /**
-     * Generates a new primary key
-     *
-     * @param plugin the plugin
-     * @return The new primary key
-     */
-    int newPrimaryKey( Plugin plugin );
-
-    /**
-     * Inserts a new record in the table.
-     *
-     * @param indexerAction instance of the IndexerAction object to insert
-     * @param plugin the plugin
-     */
-    void insert( IndexerAction indexerAction, Plugin plugin );
-
-    /**
-     * Inserts in the table all the indexer actions contained in the specified list.
-     *
-     * @param listIndexerActions the list of the IndexerAction objects to insert
-     * @param plugin the plugin
-     */
-    void insertAll( List<IndexerAction> listIndexerActions, Plugin plugin );
-
-    /**
-     * Loads the data of all indexerAction and returns them in a list
-     * @param filter the search filter
-     * @param plugin the plugin
-     * @return The list which contains the data of all actions
-     */
-    List<IndexerAction> selectList( IndexerActionFilter filter, Plugin plugin );
+    * Indexes an identity change
+    * @param identityChange the identity change to index
+    * @exception HttpAccessException http access exception
+    */
+    void index( IdentityChange identityChange ) throws HttpAccessException;
 }

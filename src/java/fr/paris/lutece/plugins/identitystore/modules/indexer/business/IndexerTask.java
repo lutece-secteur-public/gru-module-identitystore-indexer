@@ -31,71 +31,58 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.identitystore.modules.indexer.business.listeners;
+package fr.paris.lutece.plugins.identitystore.modules.indexer.business;
 
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- *
- * This class represents an action for the indexer
+ * This enum represents a task to perform by the indexer
  *
  */
-public class IndexerAction
-{
-    private int _nIdAction;
-    private int _nIdTask;
-    private String _strIdCustomer;
+public enum IndexerTask
+{CREATE( 0 ),
+    UPDATE( 1 ),
+    DELETE( 2 ),
+    ALL( -1 );
 
-    /**
-     * Gets the action id
-     * @return the action id
-     */
-    public int getIdAction(  )
+    private static Map<Integer,IndexerTask> _mapTasks = new HashMap<Integer,IndexerTask>(  );
+    private int _nValue;
+
+    static
     {
-        return _nIdAction;
+        for ( IndexerTask indexerTask : EnumSet.allOf( IndexerTask.class ) )
+        {
+            _mapTasks.put( indexerTask._nValue, indexerTask );
+        }
     }
 
     /**
-     * Sets the action id
-     * @param nIdAction the action id
+     * Constructor
+     * @param nValue the value
      */
-    public void setIdAction( int nIdAction )
+    IndexerTask( int nValue )
     {
-        _nIdAction = nIdAction;
+        _nValue = nValue;
     }
 
     /**
-     * Gets the customer id
-     * @return the customer Id
+     * Gets the value
+     * @return the value
      */
-    public String getIdCustomer(  )
+    public int getValue(  )
     {
-        return _strIdCustomer;
+        return _nValue;
     }
 
     /**
-     * Sets the customer id
-     * @param strIdCustomer the customer id
+     * Gives the IndexerTask for the specified value
+     * @param nValue the value
+     * @return the IndexerTask
      */
-    public void setIdCustomer( String strIdCustomer )
+    public static IndexerTask valueOf( int nValue )
     {
-        _strIdCustomer = strIdCustomer;
-    }
-
-    /**
-     * Gets the task id
-     * @return the task id
-     */
-    public int getIdTask(  )
-    {
-        return _nIdTask;
-    }
-
-    /**
-     * Sets the task id
-     * @param nIdTask the task id
-     */
-    public void setIdTask( int nIdTask )
-    {
-        _nIdTask = nIdTask;
+        return _mapTasks.get( Integer.valueOf( nValue ) );
     }
 }

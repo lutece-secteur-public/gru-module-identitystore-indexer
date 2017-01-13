@@ -34,9 +34,9 @@
 package fr.paris.lutece.plugins.identitystore.modules.indexer.web;
 
 import fr.paris.lutece.plugins.identitystore.business.IdentityHome;
-import fr.paris.lutece.plugins.identitystore.modules.indexer.business.listeners.IndexerAction;
-import fr.paris.lutece.plugins.identitystore.modules.indexer.business.listeners.IndexerActionHome;
-import fr.paris.lutece.plugins.identitystore.service.AttributeChangeType;
+import fr.paris.lutece.plugins.identitystore.modules.indexer.business.IndexerAction;
+import fr.paris.lutece.plugins.identitystore.modules.indexer.business.IndexerActionHome;
+import fr.paris.lutece.plugins.identitystore.modules.indexer.business.IndexerTask;
 import fr.paris.lutece.portal.util.mvc.admin.MVCAdminJspBean;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
@@ -104,8 +104,8 @@ public class IndexingJspBean extends MVCAdminJspBean
         for ( String strCustomerId : listCustomerIds )
         {
             IndexerAction indexerAction = new IndexerAction(  );
-            indexerAction.setIdCustomer( strCustomerId );
-            indexerAction.setIdTask( AttributeChangeType.UPDATE.getValue(  ) );
+            indexerAction.setCustomerId( strCustomerId );
+            indexerAction.setTask( IndexerTask.UPDATE );
 
             listIndexerActions.add( indexerAction );
         }

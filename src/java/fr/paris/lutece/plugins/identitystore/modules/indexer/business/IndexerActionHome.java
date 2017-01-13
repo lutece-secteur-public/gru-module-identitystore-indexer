@@ -31,7 +31,7 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.identitystore.modules.indexer.business.listeners;
+package fr.paris.lutece.plugins.identitystore.modules.indexer.business;
 
 import fr.paris.lutece.plugins.identitystore.modules.indexer.service.IdentityStoreIndexerPlugin;
 import fr.paris.lutece.portal.service.plugin.Plugin;
@@ -77,6 +77,15 @@ public final class IndexerActionHome
         _dao.insertAll( listIndexerActions, _plugin );
     }
 
+    /**
+     * Removes the indexerAction whose identifier is specified in parameter
+     * @param nId The IndexerActionId
+     */
+    public static synchronized void remove( int nId )
+    {
+        _dao.delete( nId, _plugin );
+    }
+    
     ///////////////////////////////////////////////////////////////////////////
     // Finders
 

@@ -12,10 +12,12 @@
 
 	<!-- DAO -->
 	<bean id="identitystore-indexer.indexerActionDAO"
-		class="fr.paris.lutece.plugins.identitystore.modules.indexer.business.listeners.IndexerActionDAO" />
+		class="fr.paris.lutece.plugins.identitystore.modules.indexer.business.IndexerActionDAO" />
+
+    <!-- STORAGE SERVICE -->
+   <bean id="identitystore-indexer.indexService" class="fr.paris.lutece.plugins.identitystore.modules.indexer.service.IdentityESIndexService"/>
 
 	<!-- Services -->
 	<bean id="identitystore-indexer.listener.indexer" 
         class="fr.paris.lutece.plugins.identitystore.modules.indexer.service.listeners.IndexingListener" />
-	
 </beans>

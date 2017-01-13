@@ -31,77 +31,72 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.identitystore.modules.indexer.business.listeners;
+package fr.paris.lutece.plugins.identitystore.modules.indexer.business;
 
-import org.apache.commons.lang.StringUtils;
+
 
 /**
  *
- * This class is a filter for IndexerAction
+ * This class represents an action for the indexer
  *
  */
-public class IndexerActionFilter
+public class IndexerAction
 {
-    /**
-     * Represents any integer
-     */
-    public static final int ALL_INT = -1;
-    private int _nIdTask = ALL_INT;
-    
-    public static final String NO_CUSTOMER = StringUtils.EMPTY;
-    private String _strIdCustomer = NO_CUSTOMER;
+    private int _nIdAction;
+    private IndexerTask _indexerTask;
+    private String _strCustomerId;
 
     /**
-     * Gets the task id
-     * @return the task id in the filter
+     * Gets the action id
+     * @return the action id
      */
-    public int getIdTask(  )
+    public int getIdAction(  )
     {
-        return _nIdTask;
+        return _nIdAction;
     }
 
     /**
-     * Sets the task id in the filter
-     * @param idTask the task id to insert in the filter
+     * Sets the action id
+     * @param nIdAction the action id
      */
-    public void setIdTask( int idTask )
+    public void setIdAction( int nIdAction )
     {
-        _nIdTask = idTask;
-    }
-
-    /**
-     * Tests if the filter contains a task to filter or not
-     * @return {@code true} if the filter contains a task to filter, {@code false} otherwise
-     */
-    public boolean containsIdTask(  )
-    {
-        return ( _nIdTask != ALL_INT );
+        _nIdAction = nIdAction;
     }
 
     /**
      * Gets the customer id
-     * @return the customer id
+     * @return the customer Id
      */
-    public String getIdCustomer(  )
+    public String getCustomerId(  )
     {
-        return _strIdCustomer;
+        return _strCustomerId;
     }
 
     /**
      * Sets the customer id
-     * @param strIdCustomer the customer id to insert in the filter
+     * @param strCustomerId the customer id
      */
-    public void setIdCustomer( String strIdCustomer )
+    public void setCustomerId( String strCustomerId )
     {
-        this._strIdCustomer = strIdCustomer;
+        _strCustomerId = strCustomerId;
     }
 
     /**
-     * Tests if the filter contains a customer to filter or not
-     * @return {@code true} if the filter contains a customer to filter, {@code false} otherwise
+     * Gets the task
+     * @return the task
      */
-    public boolean containsIdCustomer(  )
+    public IndexerTask getTask(  )
     {
-        return (! NO_CUSTOMER.equals( _strIdCustomer ) );
+        return _indexerTask;
+    }
+
+    /**
+     * Sets the task
+     * @param indexerTask the task
+     */
+    public void setTask( IndexerTask indexerTask )
+    {
+        _indexerTask = indexerTask;
     }
 }
