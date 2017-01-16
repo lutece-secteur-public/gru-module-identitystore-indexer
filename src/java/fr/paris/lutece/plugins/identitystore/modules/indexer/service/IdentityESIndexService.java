@@ -63,7 +63,7 @@ public class IdentityESIndexService implements IIdentityIndexService
     private static final String ATTRIBUTE_IDENTITY_USER_HOMEINFO_TELECOM_TELEPHONE_NUMBER = AppPropertiesService.getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_HOMEINFO_TELECOM_TELEPHONE_NUMBER );
     private static final String ATTRIBUTE_IDENTITY_USER_HOMEINFO_TELECOM_MOBILE_NUMBER = AppPropertiesService.getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_HOMEINFO_TELECOM_MOBILE_NUMBER );
     private static final String ATTRIBUTE_IDENTITY_USER_BDATE = AppPropertiesService.getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_BDATE );
-    
+   
     /**
      * {@inheritDoc }.
      *
@@ -105,9 +105,11 @@ public class IdentityESIndexService implements IIdentityIndexService
         ESCustomerDTO customer = new ESCustomerDTO(  );
 
         customer.setCustomerId( identity.getCustomerId(  ) );
+        customer.setConnectionId( identity.getConnectionId(  ) );
         
         for ( IdentityAttribute attribute : identity.getAttributes( ).values( ) )
         {
+
             if ( ATTRIBUTE_IDENTITY_USER_GENDER.equals( attribute.getAttributeKey(  ).getKeyName(  ) ) )
             {
                 customer.setCivility( getAttributeValue( attribute ) );
