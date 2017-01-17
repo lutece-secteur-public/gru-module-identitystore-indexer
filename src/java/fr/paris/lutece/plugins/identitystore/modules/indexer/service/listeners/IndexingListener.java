@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.identitystore.modules.indexer.service.listeners;
 
 import java.util.List;
 
+import fr.paris.lutece.plugins.grubusiness.business.indexing.IndexingException;
 import fr.paris.lutece.plugins.identitystore.modules.indexer.business.IndexerAction;
 import fr.paris.lutece.plugins.identitystore.modules.indexer.business.IndexerActionFilter;
 import fr.paris.lutece.plugins.identitystore.modules.indexer.business.IndexerActionHome;
@@ -42,7 +43,6 @@ import fr.paris.lutece.plugins.identitystore.modules.indexer.business.IndexerTas
 import fr.paris.lutece.plugins.identitystore.modules.indexer.service.IndexService;
 import fr.paris.lutece.plugins.identitystore.service.IdentityChange;
 import fr.paris.lutece.plugins.identitystore.service.IdentityChangeListener;
-import fr.paris.lutece.util.httpaccess.HttpAccessException;
 
 
 /**
@@ -66,7 +66,7 @@ public class IndexingListener implements IdentityChangeListener
         {
             IndexService.instance(  ).index( identityChange );
         }
-        catch ( HttpAccessException ex )
+        catch ( IndexingException ex )
         {
             String strIdCustomer = identityChange.getIdentity( ).getCustomerId(  );
 

@@ -33,9 +33,9 @@
  */
 package fr.paris.lutece.plugins.identitystore.modules.indexer.service;
 
+import fr.paris.lutece.plugins.grubusiness.business.indexing.IndexingException;
 import fr.paris.lutece.plugins.identitystore.service.IdentityChange;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
-import fr.paris.lutece.util.httpaccess.HttpAccessException;
 
 
 /**
@@ -43,7 +43,7 @@ import fr.paris.lutece.util.httpaccess.HttpAccessException;
  */
 public final class IndexService
 {
-    private static final String BEAN_INDEX_SERVICE = "identitystore-indexer.indexService";
+    private static final String BEAN_INDEX_SERVICE = "identitystore-indexer.identityIndexService";
     private static IndexService _singleton;
     private static IIdentityIndexService _identityIndexService;
 
@@ -72,7 +72,7 @@ public final class IndexService
      *
      * @param identityChange The identity change
      */
-    public void index( IdentityChange identityChange ) throws HttpAccessException
+    public void index( IdentityChange identityChange ) throws IndexingException
     {
         _identityIndexService.index( identityChange );
     }

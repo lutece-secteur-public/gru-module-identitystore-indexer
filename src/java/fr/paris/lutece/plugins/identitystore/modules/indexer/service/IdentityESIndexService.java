@@ -33,22 +33,19 @@
  */
 package fr.paris.lutece.plugins.identitystore.modules.indexer.service;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.commons.lang.StringUtils;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import fr.paris.lutece.plugins.grustorageelastic.business.ESCustomerDTO;
-import fr.paris.lutece.plugins.grustorageelastic.business.ElasticConnexion;
-import fr.paris.lutece.plugins.grustorageelastic.util.constant.GRUElasticsConstants;
+import fr.paris.lutece.plugins.grubusiness.business.customer.Customer;
+import fr.paris.lutece.plugins.grubusiness.business.indexing.IIndexingService;
+import fr.paris.lutece.plugins.grubusiness.business.indexing.IndexingException;
 import fr.paris.lutece.plugins.identitystore.business.Identity;
 import fr.paris.lutece.plugins.identitystore.business.IdentityAttribute;
 import fr.paris.lutece.plugins.identitystore.business.IdentityConstants;
 import fr.paris.lutece.plugins.identitystore.service.IdentityChange;
-import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
-import fr.paris.lutece.util.httpaccess.HttpAccessException;
 
 
 /**
@@ -63,35 +60,24 @@ public class IdentityESIndexService implements IIdentityIndexService
     private static final String ATTRIBUTE_IDENTITY_USER_HOMEINFO_TELECOM_TELEPHONE_NUMBER = AppPropertiesService.getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_HOMEINFO_TELECOM_TELEPHONE_NUMBER );
     private static final String ATTRIBUTE_IDENTITY_USER_HOMEINFO_TELECOM_MOBILE_NUMBER = AppPropertiesService.getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_HOMEINFO_TELECOM_MOBILE_NUMBER );
     private static final String ATTRIBUTE_IDENTITY_USER_BDATE = AppPropertiesService.getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_BDATE );
-   
+    
+    private static final String BEAN_INDEX_SERVICE = "identitystore-indexer.customerIndexService";
+    
+    @Inject
+    @Named( BEAN_INDEX_SERVICE )
+    private IIndexingService<Customer> _customerIndexService;
+
     /**
      * {@inheritDoc }.
      *
-     * @param identity the identity
-     * @exception HttpAccessException http access exception
-     */
+     * @param identityChange the identity change
+     * @throws IndexingException indexing exception
+     *      */
     @Override
-    public void index( IdentityChange identityChange ) throws HttpAccessException
+    public void index( IdentityChange identityChange ) throws IndexingException
     {
-        if ( identityChange != null && identityChange.getIdentity(  ) != null )
-        {
-            ObjectMapper mapper = new ObjectMapper(  );
-            mapper.setSerializationInclusion( Include.NON_NULL );
-
-            String jsonUser;
-
-            try
-            {
-                ESCustomerDTO customerDTO = buildCustomer( identityChange.getIdentity(  ) );
-                jsonUser = mapper.writeValueAsString( customerDTO );
-                ElasticConnexion.sentToElasticPOST( ElasticConnexion.getESParam( GRUElasticsConstants.PATH_ELK_TYPE_USER,
-                        identityChange.getIdentity(  ).getCustomerId(  ) ), jsonUser );
-            }
-            catch ( JsonProcessingException ex )
-            {
-                AppLogService.error( ex + " :" + ex.getMessage(  ), ex );
-            }
-        }
+        Customer customer = buildCustomer( identityChange.getIdentity(  ) );
+        _customerIndexService.index( customer );
     }
 
     /**
@@ -100,27 +86,26 @@ public class IdentityESIndexService implements IIdentityIndexService
      * @param identity the customer identity
      * @return the customer
      */
-    private ESCustomerDTO buildCustomer( Identity identity )
+    private Customer buildCustomer( Identity identity )
     {
-        ESCustomerDTO customer = new ESCustomerDTO(  );
+        Customer customer = new Customer(  );
 
-        customer.setCustomerId( identity.getCustomerId(  ) );
-        customer.setConnectionId( identity.getConnectionId(  ) );
+        customer.setId( identity.getCustomerId(  ) );
+        customer.setAccountGuid( identity.getConnectionId(  ) );
         
         for ( IdentityAttribute attribute : identity.getAttributes( ).values( ) )
         {
-
             if ( ATTRIBUTE_IDENTITY_USER_GENDER.equals( attribute.getAttributeKey(  ).getKeyName(  ) ) )
             {
-                customer.setCivility( getAttributeValue( attribute ) );
+                customer.setIdTitle( Integer.valueOf( getAttributeValue( attribute ) ) );
             }
             if ( ATTRIBUTE_IDENTITY_USER_NAME_GIVEN.equals( attribute.getAttributeKey(  ).getKeyName(  ) ) )
             {
-                customer.setFirstName( getAttributeValue( attribute ) );
+                customer.setFirstname( getAttributeValue( attribute ) );
             }
             if ( ATTRIBUTE_IDENTITY_USER_NAME_PREFERRED_NAME.equals( attribute.getAttributeKey(  ).getKeyName(  ) ) )
             {
-                customer.setName( getAttributeValue( attribute ) );
+                customer.setLastname( getAttributeValue( attribute ) );
             }
             if ( ATTRIBUTE_IDENTITY_USER_HOMEINFO_ONLINE_EMAIL.equals( attribute.getAttributeKey(  ).getKeyName(  ) ) )
             {
@@ -128,20 +113,17 @@ public class IdentityESIndexService implements IIdentityIndexService
             }
             if ( ATTRIBUTE_IDENTITY_USER_HOMEINFO_TELECOM_TELEPHONE_NUMBER.equals( attribute.getAttributeKey(  ).getKeyName(  ) ) )
             {
-                customer.setFixedTelephoneNumber( getAttributeValue( attribute ) );
+                customer.setFixedPhoneNumber( getAttributeValue( attribute ) );
             }
             if ( ATTRIBUTE_IDENTITY_USER_HOMEINFO_TELECOM_MOBILE_NUMBER.equals( attribute.getAttributeKey(  ).getKeyName(  ) ) )
             {
-                customer.setTelephoneNumber( getAttributeValue( attribute ) );
+                customer.setMobilePhone( getAttributeValue( attribute ) );
             }
             if ( ATTRIBUTE_IDENTITY_USER_BDATE.equals( attribute.getAttributeKey(  ).getKeyName(  ) ) )
             {
-                customer.setBirthday( getAttributeValue( attribute ) );
+                customer.setBirthDate( getAttributeValue( attribute ) );
             }
         }
-        
-        customer.setStayConnected( true );
-        customer.setSuggest(  );
         
         return customer;
     }

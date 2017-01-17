@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.identitystore.modules.indexer.service.daemon;
 
+import fr.paris.lutece.plugins.grubusiness.business.indexing.IndexingException;
 import fr.paris.lutece.plugins.identitystore.business.Identity;
 import fr.paris.lutece.plugins.identitystore.business.IdentityConstants;
 import fr.paris.lutece.plugins.identitystore.modules.indexer.business.IndexerAction;
@@ -46,7 +47,6 @@ import fr.paris.lutece.plugins.identitystore.service.IdentityStoreService;
 import fr.paris.lutece.portal.service.daemon.Daemon;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
-import fr.paris.lutece.util.httpaccess.HttpAccessException;
 
 import java.util.List;
 
@@ -157,7 +157,7 @@ public class IdentityIndexerDaemon extends Daemon
 
                         nNbIndexedIdentities++;
                     }
-                    catch ( HttpAccessException ex )
+                    catch ( IndexingException ex )
                     {
                         AppLogService.error( "Unable to index the customer id " + indexerAction.getCustomerId(  ) + " : " +
                                 ex.getMessage(  ) );
