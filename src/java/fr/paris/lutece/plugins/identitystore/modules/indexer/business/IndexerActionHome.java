@@ -40,10 +40,8 @@ import fr.paris.lutece.portal.service.spring.SpringContextService;
 
 import java.util.List;
 
-
 /**
- * This class provides instances management methods (create, find, ...) for
- * IndexerAction objects
+ * This class provides instances management methods (create, find, ...) for IndexerAction objects
  */
 public final class IndexerActionHome
 {
@@ -54,14 +52,15 @@ public final class IndexerActionHome
     /**
      * Private constructor
      */
-    private IndexerActionHome(  )
+    private IndexerActionHome( )
     {
     }
 
     /**
      * Creation of an instance of Indexer Action
-     * @param indexerAction The instance of the indexer action which contains
-     *            the informations to store
+     * 
+     * @param indexerAction
+     *            The instance of the indexer action which contains the informations to store
      */
     public static synchronized void create( IndexerAction indexerAction )
     {
@@ -70,7 +69,9 @@ public final class IndexerActionHome
 
     /**
      * Creation of a list of IndexerAction
-     * @param listIndexerActions The list of the indexer actions
+     * 
+     * @param listIndexerActions
+     *            The list of the indexer actions
      */
     public static synchronized void createAll( List<IndexerAction> listIndexerActions )
     {
@@ -79,20 +80,23 @@ public final class IndexerActionHome
 
     /**
      * Removes the indexerAction whose identifier is specified in parameter
-     * @param nId The IndexerActionId
+     * 
+     * @param nId
+     *            The IndexerActionId
      */
     public static synchronized void remove( int nId )
     {
         _dao.delete( nId, _plugin );
     }
-    
-    ///////////////////////////////////////////////////////////////////////////
+
+    // /////////////////////////////////////////////////////////////////////////
     // Finders
 
     /**
-     * Loads the data of all the IndexerAction depending on the filter and returns
-     * them in a list
-     * @param filter the filter
+     * Loads the data of all the IndexerAction depending on the filter and returns them in a list
+     * 
+     * @param filter
+     *            the filter
      * @return the list which contains the data of all the indexerAction
      */
     public static List<IndexerAction> getList( IndexerActionFilter filter )

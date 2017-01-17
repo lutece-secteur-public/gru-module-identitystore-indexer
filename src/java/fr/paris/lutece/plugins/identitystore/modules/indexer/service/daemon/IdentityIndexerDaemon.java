@@ -50,10 +50,9 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
 import java.util.List;
 
-
 /**
  *
- *  Daemon used to index identities in incremental mode
+ * Daemon used to index identities in incremental mode
  */
 public class IdentityIndexerDaemon extends Daemon
 {
@@ -63,34 +62,35 @@ public class IdentityIndexerDaemon extends Daemon
     private static final String LOG_END_OF_SENTENCE = ". ";
 
     private static final String APPLICATION_CODE = AppPropertiesService.getProperty( IdentityConstants.PROPERTY_APPLICATION_CODE );
-    
+
     /**
      * Constructor
      */
-    public IdentityIndexerDaemon(  )
+    public IdentityIndexerDaemon( )
     {
-        super(  );
+        super( );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void run(  )
+    public void run( )
     {
-        StringBuilder sbLogs = new StringBuilder(  );
+        StringBuilder sbLogs = new StringBuilder( );
 
         indexCreatedIdentities( sbLogs );
         indexUpdatedIdentities( sbLogs );
         indexDeletedIdentities( sbLogs );
 
-        setLastRunLogs( sbLogs.toString(  ) );
+        setLastRunLogs( sbLogs.toString( ) );
     }
 
     /**
-     * Indexes created identities.
-     * Logs the action in the specified StringBuilder
-     * @param sbLogs the StringBuilder used to log the action
+     * Indexes created identities. Logs the action in the specified StringBuilder
+     * 
+     * @param sbLogs
+     *            the StringBuilder used to log the action
      */
     private void indexCreatedIdentities( StringBuilder sbLogs )
     {
@@ -100,9 +100,10 @@ public class IdentityIndexerDaemon extends Daemon
     }
 
     /**
-     * Indexes updated identities.
-     * Logs the action in the specified StringBuilder
-     * @param sbLogs the StringBuilder used to log the action
+     * Indexes updated identities. Logs the action in the specified StringBuilder
+     * 
+     * @param sbLogs
+     *            the StringBuilder used to log the action
      */
     private void indexUpdatedIdentities( StringBuilder sbLogs )
     {
@@ -112,9 +113,10 @@ public class IdentityIndexerDaemon extends Daemon
     }
 
     /**
-     * Indexes deleted identities.
-     * Logs the action in the specified StringBuilder
-     * @param sbLogs the StringBuilder used to log the action
+     * Indexes deleted identities. Logs the action in the specified StringBuilder
+     * 
+     * @param sbLogs
+     *            the StringBuilder used to log the action
      */
     private void indexDeletedIdentities( StringBuilder sbLogs )
     {
@@ -125,14 +127,16 @@ public class IdentityIndexerDaemon extends Daemon
 
     /**
      * Indexes updated identities
-     * @param indexerTask the indexer task
+     * 
+     * @param indexerTask
+     *            the indexer task
      * @return the number of indexed identities
      */
     private int indexUpdatedIdentities( IndexerTask indexerTask )
     {
         int nNbIndexedIdentities = 0;
 
-        IndexerActionFilter indexerActionFilter = new IndexerActionFilter(  );
+        IndexerActionFilter indexerActionFilter = new IndexerActionFilter( );
         indexerActionFilter.setTask( indexerTask );
 
         List<IndexerAction> listIndexerActions = IndexerActionHome.getList( indexerActionFilter );
@@ -141,36 +145,34 @@ public class IdentityIndexerDaemon extends Daemon
         {
             try
             {
-                Identity identity = IdentityStoreService.getIdentityByCustomerId( indexerAction.getCustomerId(  ), APPLICATION_CODE );
+                Identity identity = IdentityStoreService.getIdentityByCustomerId( indexerAction.getCustomerId( ), APPLICATION_CODE );
 
                 if ( identity != null )
                 {
-                    IdentityChange identityChange = new IdentityChange(  );
+                    IdentityChange identityChange = new IdentityChange( );
                     identityChange.setIdentity( identity );
-                    identityChange.setChangeType( IdentityChangeType.valueOf(indexerAction.getTask( ).getValue(  ) ) );
+                    identityChange.setChangeType( IdentityChangeType.valueOf( indexerAction.getTask( ).getValue( ) ) );
 
                     try
                     {
-                        IndexService.instance(  ).index( identityChange );
+                        IndexService.instance( ).index( identityChange );
 
-                        IndexerActionHome.remove( indexerAction.getIdAction(  ) );
+                        IndexerActionHome.remove( indexerAction.getIdAction( ) );
 
                         nNbIndexedIdentities++;
                     }
-                    catch ( IndexingException ex )
+                    catch( IndexingException ex )
                     {
-                        AppLogService.error( "Unable to index the customer id " + indexerAction.getCustomerId(  ) + " : " +
-                                ex.getMessage(  ) );
+                        AppLogService.error( "Unable to index the customer id " + indexerAction.getCustomerId( ) + " : " + ex.getMessage( ) );
                     }
                 }
             }
-            catch ( Exception e )
+            catch( Exception e )
             {
-                AppLogService.error( "Unable to get the customer with id " + indexerAction.getCustomerId(  ) + " : " +
-                    e.getMessage(  ) );
+                AppLogService.error( "Unable to get the customer with id " + indexerAction.getCustomerId( ) + " : " + e.getMessage( ) );
             }
         }
-        
+
         return nNbIndexedIdentities;
     }
 }

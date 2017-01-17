@@ -42,12 +42,10 @@ import java.util.Map;
  *
  */
 public enum IndexerTask
-{CREATE( 0 ),
-    UPDATE( 1 ),
-    DELETE( 2 ),
-    ALL( -1 );
+{
+    CREATE( 0 ), UPDATE( 1 ), DELETE( 2 ), ALL( -1 );
 
-    private static Map<Integer,IndexerTask> _mapTasks = new HashMap<Integer,IndexerTask>(  );
+    private static Map<Integer, IndexerTask> _mapTasks = new HashMap<Integer, IndexerTask>( );
     private int _nValue;
 
     static
@@ -60,7 +58,9 @@ public enum IndexerTask
 
     /**
      * Constructor
-     * @param nValue the value
+     * 
+     * @param nValue
+     *            the value
      */
     IndexerTask( int nValue )
     {
@@ -69,16 +69,19 @@ public enum IndexerTask
 
     /**
      * Gets the value
+     * 
      * @return the value
      */
-    public int getValue(  )
+    public int getValue( )
     {
         return _nValue;
     }
 
     /**
      * Gives the IndexerTask for the specified value
-     * @param nValue the value
+     * 
+     * @param nValue
+     *            the value
      * @return the IndexerTask
      */
     public static IndexerTask valueOf( int nValue )

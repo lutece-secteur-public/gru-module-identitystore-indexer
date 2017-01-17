@@ -44,7 +44,6 @@ import fr.paris.lutece.plugins.identitystore.modules.indexer.service.IndexServic
 import fr.paris.lutece.plugins.identitystore.service.IdentityChange;
 import fr.paris.lutece.plugins.identitystore.service.IdentityChangeListener;
 
-
 /**
  * This class is a listener for indexing an identity when a attribute changes
  *
@@ -54,7 +53,7 @@ public class IndexingListener implements IdentityChangeListener
     private static final String SERVICE_NAME = "Identity indexing listener";
 
     @Override
-    public String getName(  )
+    public String getName( )
     {
         return SERVICE_NAME;
     }
@@ -64,22 +63,22 @@ public class IndexingListener implements IdentityChangeListener
     {
         try
         {
-            IndexService.instance(  ).index( identityChange );
+            IndexService.instance( ).index( identityChange );
         }
-        catch ( IndexingException ex )
+        catch( IndexingException ex )
         {
-            String strIdCustomer = identityChange.getIdentity( ).getCustomerId(  );
+            String strIdCustomer = identityChange.getIdentity( ).getCustomerId( );
 
-            IndexerActionFilter filter = new IndexerActionFilter(  );
+            IndexerActionFilter filter = new IndexerActionFilter( );
             filter.setCustomerId( strIdCustomer );
 
             List<IndexerAction> listIndexerActions = IndexerActionHome.getList( filter );
 
-            if ( listIndexerActions.isEmpty(  ) )
+            if ( listIndexerActions.isEmpty( ) )
             {
-                IndexerAction indexerAction = new IndexerAction(  );
+                IndexerAction indexerAction = new IndexerAction( );
                 indexerAction.setCustomerId( strIdCustomer );
-                indexerAction.setTask( IndexerTask.valueOf( identityChange.getChangeType( ).getValue(  ) )  );
+                indexerAction.setTask( IndexerTask.valueOf( identityChange.getChangeType( ).getValue( ) ) );
 
                 IndexerActionHome.create( indexerAction );
             }

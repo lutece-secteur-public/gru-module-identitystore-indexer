@@ -36,16 +36,18 @@ package fr.paris.lutece.plugins.identitystore.modules.indexer.service;
 import fr.paris.lutece.plugins.identitystore.service.IdentityChange;
 import fr.paris.lutece.util.httpaccess.HttpAccessException;
 
-
 /**
  * This interface enables to index entities
  */
-public interface IIndexService 
+public interface IIndexService
 {
     /**
-    * Indexes an identity change
-    * @param identityChange the identity change to index
-    * @exception HttpAccessException http access exception
-    */
+     * Indexes an identity change
+     * 
+     * @param identityChange
+     *            the identity change to index
+     * @exception HttpAccessException
+     *                http access exception
+     */
     void index( IdentityChange identityChange ) throws HttpAccessException;
 }

@@ -36,16 +36,18 @@ package fr.paris.lutece.plugins.identitystore.modules.indexer.service;
 import fr.paris.lutece.plugins.grubusiness.business.indexing.IndexingException;
 import fr.paris.lutece.plugins.identitystore.service.IdentityChange;
 
-
 /**
  * This interface enables to index identity change
  */
-public interface IIdentityIndexService 
+public interface IIdentityIndexService
 {
     /**
-    * Indexes an identity change
-    * @param identityChange the identity change to index
-    * @throws IndexingException indexing exception
-    */
+     * Indexes an identity change
+     * 
+     * @param identityChange
+     *            the identity change to index
+     * @throws IndexingException
+     *             indexing exception
+     */
     void index( IdentityChange identityChange ) throws IndexingException;
 }

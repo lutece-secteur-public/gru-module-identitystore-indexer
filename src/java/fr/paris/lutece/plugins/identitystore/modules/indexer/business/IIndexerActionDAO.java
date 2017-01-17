@@ -37,7 +37,6 @@ import fr.paris.lutece.portal.service.plugin.Plugin;
 
 import java.util.List;
 
-
 /**
  *
  * Interface for an IndexerActionDAO
@@ -48,7 +47,8 @@ public interface IIndexerActionDAO
     /**
      * Generates a new primary key
      *
-     * @param plugin the plugin
+     * @param plugin
+     *            the plugin
      * @return The new primary key
      */
     int newPrimaryKey( Plugin plugin );
@@ -56,31 +56,40 @@ public interface IIndexerActionDAO
     /**
      * Inserts a new record in the table.
      *
-     * @param indexerAction instance of the IndexerAction object to insert
-     * @param plugin the plugin
+     * @param indexerAction
+     *            instance of the IndexerAction object to insert
+     * @param plugin
+     *            the plugin
      */
     void insert( IndexerAction indexerAction, Plugin plugin );
 
     /**
      * Inserts in the table all the indexer actions contained in the specified list.
      *
-     * @param listIndexerActions the list of the IndexerAction objects to insert
-     * @param plugin the plugin
+     * @param listIndexerActions
+     *            the list of the IndexerAction objects to insert
+     * @param plugin
+     *            the plugin
      */
     void insertAll( List<IndexerAction> listIndexerActions, Plugin plugin );
-    
+
     /**
      * Deletes a record from the table
      *
-     * @param nId The identifier of the action
-     * @param plugin the plugin
+     * @param nId
+     *            The identifier of the action
+     * @param plugin
+     *            the plugin
      */
     void delete( int nId, Plugin plugin );
 
     /**
      * Loads the data of all indexerAction and returns them in a list
-     * @param filter the search filter
-     * @param plugin the plugin
+     * 
+     * @param filter
+     *            the search filter
+     * @param plugin
+     *            the plugin
      * @return The list which contains the data of all actions
      */
     List<IndexerAction> selectList( IndexerActionFilter filter, Plugin plugin );
