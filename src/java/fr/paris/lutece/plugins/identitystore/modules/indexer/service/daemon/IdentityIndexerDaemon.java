@@ -93,8 +93,9 @@ public class IdentityIndexerDaemon extends Daemon
      */
     private void indexCreatedIdentities( StringBuilder sbLogs )
     {
+        int nNbCreatedIdentities = indexIdentities( IndexerTask.CREATE );
         sbLogs.append( LOG_INDEX_CREATED );
-        sbLogs.append( indexIdentities( IndexerTask.CREATE ) );
+        sbLogs.append( nNbCreatedIdentities );
         sbLogs.append( LOG_END_OF_SENTENCE );
     }
 
@@ -106,8 +107,9 @@ public class IdentityIndexerDaemon extends Daemon
      */
     private void indexUpdatedIdentities( StringBuilder sbLogs )
     {
+        int nNbUpdatedIdentities = indexIdentities( IndexerTask.UPDATE );
         sbLogs.append( LOG_INDEX_UPDATED );
-        sbLogs.append( indexIdentities( IndexerTask.UPDATE ) );
+        sbLogs.append( nNbUpdatedIdentities );
         sbLogs.append( LOG_END_OF_SENTENCE );
     }
 
@@ -119,8 +121,9 @@ public class IdentityIndexerDaemon extends Daemon
      */
     private void indexDeletedIdentities( StringBuilder sbLogs )
     {
+        int nNbDeletedIdentities = indexIdentities( IndexerTask.DELETE );
         sbLogs.append( LOG_INDEX_DELETED );
-        sbLogs.append( indexIdentities( IndexerTask.DELETE ) );
+        sbLogs.append( nNbDeletedIdentities );
         sbLogs.append( LOG_END_OF_SENTENCE );
     }
 
@@ -150,10 +153,18 @@ public class IdentityIndexerDaemon extends Daemon
 
                 if ( identity == null )
                 {
-                    identity = new Identity( );
-                    identity.setCustomerId( indexerAction.getCustomerId( ) );
-                    identityChange.setIdentity( identity );
-                    identityChange.setChangeType( IdentityChangeType.valueOf( IndexerTask.DELETE.getValue( ) ) );
+                    if ( indexerAction.getTask( ).getValue( ) == IndexerTask.DELETE.getValue( ) )
+                    {
+                        identity = new Identity( );
+                        identity.setCustomerId( indexerAction.getCustomerId( ) );
+                        identityChange.setIdentity( identity );
+                        identityChange.setChangeType( IdentityChangeType.valueOf( indexerAction.getTask( ).getValue( ) ) );
+                    }
+                    else
+                    {
+                        IndexerActionHome.remove( indexerAction.getIdAction( ) );
+                        AppLogService.error( "Try to index the customer " + indexerAction.getCustomerId( ) + " already removed" );
+                    }
                 }
                 else
                 {
@@ -161,17 +172,20 @@ public class IdentityIndexerDaemon extends Daemon
                     identityChange.setChangeType( IdentityChangeType.valueOf( indexerAction.getTask( ).getValue( ) ) );
                 }
 
-                try
+                if ( identity != null )
                 {
-                    IndexService.instance( ).process( identityChange );
+                    try
+                    {
+                        IndexService.instance( ).process( identityChange );
 
-                    IndexerActionHome.remove( indexerAction.getIdAction( ) );
+                        IndexerActionHome.remove( indexerAction.getIdAction( ) );
 
-                    nNbIndexedIdentities++;
-                }
-                catch( IndexingException ex )
-                {
-                    AppLogService.error( "Unable to index the customer id " + indexerAction.getCustomerId( ) + " : " + ex.getMessage( ) );
+                        nNbIndexedIdentities++;
+                    }
+                    catch( IndexingException ex )
+                    {
+                        AppLogService.error( "Unable to index the customer id " + indexerAction.getCustomerId( ) + " : " + ex.getMessage( ) );
+                    }
                 }
             }
             catch( Exception e )
