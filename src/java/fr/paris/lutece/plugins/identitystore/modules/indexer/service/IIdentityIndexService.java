@@ -36,7 +36,6 @@ package fr.paris.lutece.plugins.identitystore.modules.indexer.service;
 import fr.paris.lutece.plugins.grubusiness.business.indexing.IndexingException;
 import fr.paris.lutece.plugins.identitystore.business.Identity;
 
-
 /**
  * This interface enables to index identity
  */

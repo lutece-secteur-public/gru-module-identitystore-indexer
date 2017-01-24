@@ -54,7 +54,7 @@ public class IndexingListener implements IdentityChangeListener
     private static final String SERVICE_NAME = "Identity indexing listener";
 
     @Override
-    public String getName(  )
+    public String getName( )
     {
         return SERVICE_NAME;
     }
@@ -66,19 +66,19 @@ public class IndexingListener implements IdentityChangeListener
         {
             IndexService.instance(  ).process( identityChange );
         }
-        catch ( IndexingException ex )
+        catch( IndexingException ex )
         {
             String strIdCustomer = identityChange.getIdentity(  ).getCustomerId(  );
 
-            IndexerActionFilter filter = new IndexerActionFilter(  );
+            IndexerActionFilter filter = new IndexerActionFilter( );
             filter.setCustomerId( strIdCustomer );
             filter.setTask( IndexerTask.valueOf( identityChange.getChangeType(  ).getValue(  ) ) );
 
             List<IndexerAction> listIndexerActions = IndexerActionHome.getList( filter );
 
-            if ( listIndexerActions.isEmpty(  ) )
+            if ( listIndexerActions.isEmpty( ) )
             {
-                IndexerAction indexerAction = new IndexerAction(  );
+                IndexerAction indexerAction = new IndexerAction( );
                 indexerAction.setCustomerId( strIdCustomer );
                 indexerAction.setTask( IndexerTask.valueOf( identityChange.getChangeType(  ).getValue(  ) ) );
 

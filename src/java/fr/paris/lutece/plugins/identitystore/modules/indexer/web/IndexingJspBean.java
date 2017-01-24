@@ -47,7 +47,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * This class provides the user interface to index identities from Identity Store
  *
@@ -55,7 +54,7 @@ import javax.servlet.http.HttpServletRequest;
 @Controller( controllerJsp = IndexingJspBean.ADMIN_FEATURE_CONTROLLER_JSP, controllerPath = IndexingJspBean.ADMIN_FEATURE_CONTROLLLER_PATH, right = IndexingJspBean.ADMIN_FEATURE_RIGHT )
 public class IndexingJspBean extends MVCAdminJspBean
 {
-    ////////////////////////////////////////////////////////////////////////////
+    // //////////////////////////////////////////////////////////////////////////
     // Constants
     public static final String ADMIN_FEATURE_CONTROLLER_JSP = "IndexIdentities.jsp";
     public static final String ADMIN_FEATURE_CONTROLLLER_PATH = "jsp/admin/plugins/identitystore/modules/indexer/";
@@ -81,7 +80,9 @@ public class IndexingJspBean extends MVCAdminJspBean
 
     /**
      * Builds the page to index identities
-     * @param request The HTTP request
+     * 
+     * @param request
+     *            The HTTP request
      * @return The page
      */
     @View( value = VIEW_INDEX_IDENTITIES, defaultView = true )
@@ -92,18 +93,20 @@ public class IndexingJspBean extends MVCAdminJspBean
 
     /**
      * Indexes the identities
-     * @param request The Http Request
+     * 
+     * @param request
+     *            The Http Request
      * @return The JSP URL to display after the process
      */
     @Action( ACTION_INDEX_IDENTITIES )
     public String doIndexIdentities( HttpServletRequest request )
     {
-        List<String> listCustomerIds = IdentityHome.getCustomerIdsList(  );
-        List<IndexerAction> listIndexerActions = new ArrayList<IndexerAction>( listCustomerIds.size(  ) );
+        List<String> listCustomerIds = IdentityHome.getCustomerIdsList( );
+        List<IndexerAction> listIndexerActions = new ArrayList<IndexerAction>( listCustomerIds.size( ) );
 
         for ( String strCustomerId : listCustomerIds )
         {
-            IndexerAction indexerAction = new IndexerAction(  );
+            IndexerAction indexerAction = new IndexerAction( );
             indexerAction.setCustomerId( strCustomerId );
             indexerAction.setTask( IndexerTask.UPDATE );
 
@@ -112,7 +115,7 @@ public class IndexingJspBean extends MVCAdminJspBean
 
         IndexerActionHome.createAll( listIndexerActions );
 
-        addInfo( INFO_IDENTITIES_INDEXING_SUCCESS, getLocale(  ) );
+        addInfo( INFO_IDENTITIES_INDEXING_SUCCESS, getLocale( ) );
 
         return redirectView( request, VIEW_INDEX_IDENTITIES );
     }

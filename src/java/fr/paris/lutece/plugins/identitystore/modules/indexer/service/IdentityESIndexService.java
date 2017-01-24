@@ -54,12 +54,17 @@ public class IdentityESIndexService implements IIdentityIndexService
 {
     private static final String ATTRIBUTE_IDENTITY_USER_GENDER = AppPropertiesService.getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_GENDER );
     private static final String ATTRIBUTE_IDENTITY_USER_NAME_GIVEN = AppPropertiesService.getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_NAME_GIVEN );
-    private static final String ATTRIBUTE_IDENTITY_USER_NAME_PREFERRED_NAME = AppPropertiesService.getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_PREFERRED_NAME );
-    private static final String ATTRIBUTE_IDENTITY_USER_HOMEINFO_ONLINE_EMAIL = AppPropertiesService.getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_HOMEINFO_ONLINE_EMAIL );
-    private static final String ATTRIBUTE_IDENTITY_USER_HOMEINFO_TELECOM_TELEPHONE_NUMBER = AppPropertiesService.getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_HOMEINFO_TELECOM_TELEPHONE_NUMBER );
-    private static final String ATTRIBUTE_IDENTITY_USER_HOMEINFO_TELECOM_MOBILE_NUMBER = AppPropertiesService.getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_HOMEINFO_TELECOM_MOBILE_NUMBER );
+    private static final String ATTRIBUTE_IDENTITY_USER_NAME_PREFERRED_NAME = AppPropertiesService
+            .getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_PREFERRED_NAME );
+    private static final String ATTRIBUTE_IDENTITY_USER_HOMEINFO_ONLINE_EMAIL = AppPropertiesService
+            .getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_HOMEINFO_ONLINE_EMAIL );
+    private static final String ATTRIBUTE_IDENTITY_USER_HOMEINFO_TELECOM_TELEPHONE_NUMBER = AppPropertiesService
+            .getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_HOMEINFO_TELECOM_TELEPHONE_NUMBER );
+    private static final String ATTRIBUTE_IDENTITY_USER_HOMEINFO_TELECOM_MOBILE_NUMBER = AppPropertiesService
+            .getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_HOMEINFO_TELECOM_MOBILE_NUMBER );
     private static final String ATTRIBUTE_IDENTITY_USER_BDATE = AppPropertiesService.getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_BDATE );
     private static final String BEAN_INDEX_SERVICE = "identitystore-indexer.customerIndexService";
+
     @Inject
     @Named( BEAN_INDEX_SERVICE )
     private IIndexingService<Customer> _customerIndexService;
@@ -105,7 +110,10 @@ public class IdentityESIndexService implements IIdentityIndexService
      */
     private Customer buildCustomer( Identity identity )
     {
-        Customer customer = new Customer(  );
+        Customer customer = new Customer( );
+
+        customer.setId( identity.getCustomerId( ) );
+        customer.setAccountGuid( identity.getConnectionId( ) );
 
         customer.setId( identity.getCustomerId(  ) );
         customer.setAccountGuid( identity.getConnectionId(  ) );
@@ -158,13 +166,13 @@ public class IdentityESIndexService implements IIdentityIndexService
 
     /**
      * Gets the attribute value from the identityAttribute
-     *
+     * 
      * @param identityAttribute
      *            the identityAttribute
      * @return {@code null} if the identityAttribute does not exist, the identityAttribute value otherwise
      */
     private String getAttributeValue( IdentityAttribute identityAttribute )
     {
-        return ( identityAttribute.getValue(  ) == null ) ? StringUtils.EMPTY : identityAttribute.getValue(  );
+        return ( identityAttribute.getValue( ) == null ) ? StringUtils.EMPTY : identityAttribute.getValue( );
     }
 }
