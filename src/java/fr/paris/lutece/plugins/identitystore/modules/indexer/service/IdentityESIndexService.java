@@ -46,7 +46,6 @@ import org.apache.commons.lang.StringUtils;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-
 /**
  * The Class ElasticNotificationStorageService.
  */
@@ -115,46 +114,44 @@ public class IdentityESIndexService implements IIdentityIndexService
         customer.setId( identity.getCustomerId( ) );
         customer.setAccountGuid( identity.getConnectionId( ) );
 
-        customer.setId( identity.getCustomerId(  ) );
-        customer.setAccountGuid( identity.getConnectionId(  ) );
+        customer.setId( identity.getCustomerId( ) );
+        customer.setAccountGuid( identity.getConnectionId( ) );
 
-        if ( identity.getAttributes(  ) != null )
+        if ( identity.getAttributes( ) != null )
         {
-            for ( IdentityAttribute attribute : identity.getAttributes(  ).values(  ) )
+            for ( IdentityAttribute attribute : identity.getAttributes( ).values( ) )
             {
-                if ( ATTRIBUTE_IDENTITY_USER_GENDER.equals( attribute.getAttributeKey(  ).getKeyName(  ) ) )
+                if ( ATTRIBUTE_IDENTITY_USER_GENDER.equals( attribute.getAttributeKey( ).getKeyName( ) ) )
                 {
                     customer.setIdTitle( Integer.valueOf( getAttributeValue( attribute ) ) );
                 }
 
-                if ( ATTRIBUTE_IDENTITY_USER_NAME_GIVEN.equals( attribute.getAttributeKey(  ).getKeyName(  ) ) )
+                if ( ATTRIBUTE_IDENTITY_USER_NAME_GIVEN.equals( attribute.getAttributeKey( ).getKeyName( ) ) )
                 {
                     customer.setFirstname( getAttributeValue( attribute ) );
                 }
 
-                if ( ATTRIBUTE_IDENTITY_USER_NAME_PREFERRED_NAME.equals( attribute.getAttributeKey(  ).getKeyName(  ) ) )
+                if ( ATTRIBUTE_IDENTITY_USER_NAME_PREFERRED_NAME.equals( attribute.getAttributeKey( ).getKeyName( ) ) )
                 {
                     customer.setLastname( getAttributeValue( attribute ) );
                 }
 
-                if ( ATTRIBUTE_IDENTITY_USER_HOMEINFO_ONLINE_EMAIL.equals( attribute.getAttributeKey(  ).getKeyName(  ) ) )
+                if ( ATTRIBUTE_IDENTITY_USER_HOMEINFO_ONLINE_EMAIL.equals( attribute.getAttributeKey( ).getKeyName( ) ) )
                 {
                     customer.setEmail( getAttributeValue( attribute ) );
                 }
 
-                if ( ATTRIBUTE_IDENTITY_USER_HOMEINFO_TELECOM_TELEPHONE_NUMBER.equals( 
-                            attribute.getAttributeKey(  ).getKeyName(  ) ) )
+                if ( ATTRIBUTE_IDENTITY_USER_HOMEINFO_TELECOM_TELEPHONE_NUMBER.equals( attribute.getAttributeKey( ).getKeyName( ) ) )
                 {
                     customer.setFixedPhoneNumber( getAttributeValue( attribute ) );
                 }
 
-                if ( ATTRIBUTE_IDENTITY_USER_HOMEINFO_TELECOM_MOBILE_NUMBER.equals( 
-                            attribute.getAttributeKey(  ).getKeyName(  ) ) )
+                if ( ATTRIBUTE_IDENTITY_USER_HOMEINFO_TELECOM_MOBILE_NUMBER.equals( attribute.getAttributeKey( ).getKeyName( ) ) )
                 {
                     customer.setMobilePhone( getAttributeValue( attribute ) );
                 }
 
-                if ( ATTRIBUTE_IDENTITY_USER_BDATE.equals( attribute.getAttributeKey(  ).getKeyName(  ) ) )
+                if ( ATTRIBUTE_IDENTITY_USER_BDATE.equals( attribute.getAttributeKey( ).getKeyName( ) ) )
                 {
                     customer.setBirthDate( getAttributeValue( attribute ) );
                 }

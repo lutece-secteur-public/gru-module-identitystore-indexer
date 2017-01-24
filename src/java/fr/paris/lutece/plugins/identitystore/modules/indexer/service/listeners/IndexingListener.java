@@ -44,7 +44,6 @@ import fr.paris.lutece.plugins.identitystore.service.IdentityChangeListener;
 
 import java.util.List;
 
-
 /**
  * This class is a listener for indexing an identity when a attribute changes
  *
@@ -64,15 +63,15 @@ public class IndexingListener implements IdentityChangeListener
     {
         try
         {
-            IndexService.instance(  ).process( identityChange );
+            IndexService.instance( ).process( identityChange );
         }
         catch( IndexingException ex )
         {
-            String strIdCustomer = identityChange.getIdentity(  ).getCustomerId(  );
+            String strIdCustomer = identityChange.getIdentity( ).getCustomerId( );
 
             IndexerActionFilter filter = new IndexerActionFilter( );
             filter.setCustomerId( strIdCustomer );
-            filter.setTask( IndexerTask.valueOf( identityChange.getChangeType(  ).getValue(  ) ) );
+            filter.setTask( IndexerTask.valueOf( identityChange.getChangeType( ).getValue( ) ) );
 
             List<IndexerAction> listIndexerActions = IndexerActionHome.getList( filter );
 
@@ -80,7 +79,7 @@ public class IndexingListener implements IdentityChangeListener
             {
                 IndexerAction indexerAction = new IndexerAction( );
                 indexerAction.setCustomerId( strIdCustomer );
-                indexerAction.setTask( IndexerTask.valueOf( identityChange.getChangeType(  ).getValue(  ) ) );
+                indexerAction.setTask( IndexerTask.valueOf( identityChange.getChangeType( ).getValue( ) ) );
 
                 IndexerActionHome.create( indexerAction );
             }

@@ -144,36 +144,34 @@ public class IdentityIndexerDaemon extends Daemon
         {
             try
             {
-                Identity identity = IdentityStoreService.getIdentityByCustomerId( indexerAction.getCustomerId(  ),
-                        APPLICATION_CODE );
+                Identity identity = IdentityStoreService.getIdentityByCustomerId( indexerAction.getCustomerId( ), APPLICATION_CODE );
 
-                IdentityChange identityChange = new IdentityChange(  );
+                IdentityChange identityChange = new IdentityChange( );
 
                 if ( identity == null )
                 {
-                    identity = new Identity(  );
-                    identity.setCustomerId( indexerAction.getCustomerId(  ) );
+                    identity = new Identity( );
+                    identity.setCustomerId( indexerAction.getCustomerId( ) );
                     identityChange.setIdentity( identity );
-                    identityChange.setChangeType( IdentityChangeType.valueOf( IndexerTask.DELETE.getValue(  ) ) );
+                    identityChange.setChangeType( IdentityChangeType.valueOf( IndexerTask.DELETE.getValue( ) ) );
                 }
                 else
                 {
                     identityChange.setIdentity( identity );
-                    identityChange.setChangeType( IdentityChangeType.valueOf( indexerAction.getTask(  ).getValue(  ) ) );
+                    identityChange.setChangeType( IdentityChangeType.valueOf( indexerAction.getTask( ).getValue( ) ) );
                 }
 
                 try
                 {
-                    IndexService.instance(  ).process( identityChange );
+                    IndexService.instance( ).process( identityChange );
 
-                    IndexerActionHome.remove( indexerAction.getIdAction(  ) );
+                    IndexerActionHome.remove( indexerAction.getIdAction( ) );
 
                     nNbIndexedIdentities++;
                 }
-                catch ( IndexingException ex )
+                catch( IndexingException ex )
                 {
-                    AppLogService.error( "Unable to index the customer id " + indexerAction.getCustomerId(  ) + " : " +
-                        ex.getMessage(  ) );
+                    AppLogService.error( "Unable to index the customer id " + indexerAction.getCustomerId( ) + " : " + ex.getMessage( ) );
                 }
             }
             catch( Exception e )

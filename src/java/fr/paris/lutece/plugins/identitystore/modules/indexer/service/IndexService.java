@@ -74,17 +74,17 @@ public final class IndexService
      * @param identityChange
      *            The identity change
      */
-    public void process( IdentityChange identityChange )
-        throws IndexingException
+    public void process( IdentityChange identityChange ) throws IndexingException
     {
-        if ( ( identityChange.getChangeType(  ).getValue(  ) == IdentityChangeType.CREATE.getValue(  ) ) ||
-                ( identityChange.getChangeType(  ).getValue(  ) == IdentityChangeType.UPDATE.getValue(  ) ) )
+        if ( ( identityChange.getChangeType( ).getValue( ) == IdentityChangeType.CREATE.getValue( ) )
+                || ( identityChange.getChangeType( ).getValue( ) == IdentityChangeType.UPDATE.getValue( ) ) )
         {
-            _identityIndexService.index( identityChange.getIdentity(  ) );
+            _identityIndexService.index( identityChange.getIdentity( ) );
         }
-        else if ( identityChange.getChangeType(  ).getValue(  ) == IdentityChangeType.DELETE.getValue(  ) )
-        {
-            _identityIndexService.deleteIndex( identityChange.getIdentity(  ) );
-        }
+        else
+            if ( identityChange.getChangeType( ).getValue( ) == IdentityChangeType.DELETE.getValue( ) )
+            {
+                _identityIndexService.deleteIndex( identityChange.getIdentity( ) );
+            }
     }
 }
