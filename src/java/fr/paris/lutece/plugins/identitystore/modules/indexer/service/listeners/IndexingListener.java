@@ -33,8 +33,6 @@
  */
 package fr.paris.lutece.plugins.identitystore.modules.indexer.service.listeners;
 
-import java.util.List;
-
 import fr.paris.lutece.plugins.grubusiness.business.indexing.IndexingException;
 import fr.paris.lutece.plugins.identitystore.modules.indexer.business.IndexerAction;
 import fr.paris.lutece.plugins.identitystore.modules.indexer.business.IndexerActionFilter;
@@ -43,6 +41,8 @@ import fr.paris.lutece.plugins.identitystore.modules.indexer.business.IndexerTas
 import fr.paris.lutece.plugins.identitystore.modules.indexer.service.IndexService;
 import fr.paris.lutece.plugins.identitystore.service.IdentityChange;
 import fr.paris.lutece.plugins.identitystore.service.IdentityChangeListener;
+
+import java.util.List;
 
 
 /**
@@ -64,14 +64,15 @@ public class IndexingListener implements IdentityChangeListener
     {
         try
         {
-            IndexService.instance(  ).index( identityChange );
+            IndexService.instance(  ).process( identityChange );
         }
         catch ( IndexingException ex )
         {
-            String strIdCustomer = identityChange.getIdentity( ).getCustomerId(  );
+            String strIdCustomer = identityChange.getIdentity(  ).getCustomerId(  );
 
             IndexerActionFilter filter = new IndexerActionFilter(  );
             filter.setCustomerId( strIdCustomer );
+            filter.setTask( IndexerTask.valueOf( identityChange.getChangeType(  ).getValue(  ) ) );
 
             List<IndexerAction> listIndexerActions = IndexerActionHome.getList( filter );
 
@@ -79,7 +80,7 @@ public class IndexingListener implements IdentityChangeListener
             {
                 IndexerAction indexerAction = new IndexerAction(  );
                 indexerAction.setCustomerId( strIdCustomer );
-                indexerAction.setTask( IndexerTask.valueOf( identityChange.getChangeType( ).getValue(  ) )  );
+                indexerAction.setTask( IndexerTask.valueOf( identityChange.getChangeType(  ).getValue(  ) ) );
 
                 IndexerActionHome.create( indexerAction );
             }

@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.identitystore.modules.indexer.service;
 
 import fr.paris.lutece.plugins.grubusiness.business.indexing.IndexingException;
 import fr.paris.lutece.plugins.identitystore.service.IdentityChange;
+import fr.paris.lutece.plugins.identitystore.service.IdentityChangeType;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 
 
@@ -54,6 +55,7 @@ public final class IndexService
 
     /**
      * Returns the unique instance
+     *
      * @return The unique instance
      */
     public static IndexService instance(  )
@@ -70,10 +72,20 @@ public final class IndexService
     /**
      * Indexes the identity change
      *
-     * @param identityChange The identity change
+     * @param identityChange
+     *            The identity change
      */
-    public void index( IdentityChange identityChange ) throws IndexingException
+    public void process( IdentityChange identityChange )
+        throws IndexingException
     {
-        _identityIndexService.index( identityChange );
+        if ( ( identityChange.getChangeType(  ).getValue(  ) == IdentityChangeType.CREATE.getValue(  ) ) ||
+                ( identityChange.getChangeType(  ).getValue(  ) == IdentityChangeType.UPDATE.getValue(  ) ) )
+        {
+            _identityIndexService.index( identityChange.getIdentity(  ) );
+        }
+        else if ( identityChange.getChangeType(  ).getValue(  ) == IdentityChangeType.DELETE.getValue(  ) )
+        {
+            _identityIndexService.deleteIndex( identityChange.getIdentity(  ) );
+        }
     }
 }
