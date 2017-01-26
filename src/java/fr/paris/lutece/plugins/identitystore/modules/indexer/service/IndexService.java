@@ -33,19 +33,43 @@
  */
 package fr.paris.lutece.plugins.identitystore.modules.indexer.service;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.apache.commons.lang.StringUtils;
+
+import fr.paris.lutece.plugins.grubusiness.business.customer.Customer;
+import fr.paris.lutece.plugins.grubusiness.business.indexing.IIndexingService;
 import fr.paris.lutece.plugins.grubusiness.business.indexing.IndexingException;
+import fr.paris.lutece.plugins.identitystore.business.Identity;
+import fr.paris.lutece.plugins.identitystore.business.IdentityAttribute;
+import fr.paris.lutece.plugins.identitystore.business.IdentityConstants;
 import fr.paris.lutece.plugins.identitystore.service.IdentityChange;
 import fr.paris.lutece.plugins.identitystore.service.IdentityChangeType;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
 /**
  * This class represents a service for indexing
  */
 public final class IndexService
 {
-    private static final String BEAN_INDEX_SERVICE = "identitystore-indexer.identityIndexService";
     private static IndexService _singleton;
-    private static IIdentityIndexService _identityIndexService;
+
+    private static final String ATTRIBUTE_IDENTITY_USER_GENDER = AppPropertiesService.getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_GENDER );
+    private static final String ATTRIBUTE_IDENTITY_USER_NAME_GIVEN = AppPropertiesService.getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_NAME_GIVEN );
+    private static final String ATTRIBUTE_IDENTITY_USER_NAME_PREFERRED_NAME = AppPropertiesService
+            .getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_PREFERRED_NAME );
+    private static final String ATTRIBUTE_IDENTITY_USER_HOMEINFO_ONLINE_EMAIL = AppPropertiesService
+            .getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_HOMEINFO_ONLINE_EMAIL );
+    private static final String ATTRIBUTE_IDENTITY_USER_HOMEINFO_TELECOM_TELEPHONE_NUMBER = AppPropertiesService
+            .getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_HOMEINFO_TELECOM_TELEPHONE_NUMBER );
+    private static final String ATTRIBUTE_IDENTITY_USER_HOMEINFO_TELECOM_MOBILE_NUMBER = AppPropertiesService
+            .getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_HOMEINFO_TELECOM_MOBILE_NUMBER );
+    private static final String ATTRIBUTE_IDENTITY_USER_BDATE = AppPropertiesService.getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_BDATE );
+    private static final String BEAN_INDEX_SERVICE = "identitystore-indexer.customerIndexService";
+
+    private static IIndexingService<Customer> _customerIndexService;
 
     /** private constructor */
     private IndexService( )
@@ -62,7 +86,7 @@ public final class IndexService
         if ( _singleton == null )
         {
             _singleton = new IndexService( );
-            _identityIndexService = SpringContextService.getBean( BEAN_INDEX_SERVICE );
+            _customerIndexService = SpringContextService.getBean( BEAN_INDEX_SERVICE );
         }
 
         return _singleton;
@@ -79,12 +103,112 @@ public final class IndexService
         if ( ( identityChange.getChangeType( ).getValue( ) == IdentityChangeType.CREATE.getValue( ) )
                 || ( identityChange.getChangeType( ).getValue( ) == IdentityChangeType.UPDATE.getValue( ) ) )
         {
-            _identityIndexService.index( identityChange.getIdentity( ) );
+            index( identityChange.getIdentity( ) );
         }
         else
             if ( identityChange.getChangeType( ).getValue( ) == IdentityChangeType.DELETE.getValue( ) )
             {
-                _identityIndexService.deleteIndex( identityChange.getIdentity( ) );
+                deleteIndex( identityChange.getIdentity( ) );
             }
+    }
+
+    /**
+     * {@inheritDoc }.
+     *
+     * @param identity
+     *            the identity
+     * @throws IndexingException
+     *             indexing exception
+     * */
+    public void index( Identity identity ) throws IndexingException
+    {
+        Customer customer = buildCustomer( identity );
+
+        _customerIndexService.index( customer );
+    }
+
+    /**
+     * {@inheritDoc }.
+     *
+     * @param identity
+     *            the identity
+     * @throws IndexingException
+     *             indexing exception
+     * */
+    public void deleteIndex( Identity identity ) throws IndexingException
+    {
+        Customer customer = buildCustomer( identity );
+
+        _customerIndexService.deleteIndex( customer );
+    }
+
+    /**
+     * Build an identity to a customer.
+     *
+     * @param identity
+     *            the identity
+     * @return the customer
+     */
+    private Customer buildCustomer( Identity identity )
+    {
+        Customer customer = new Customer( );
+
+        customer.setId( identity.getCustomerId( ) );
+        customer.setAccountGuid( identity.getConnectionId( ) );
+
+        if ( identity.getAttributes( ) != null )
+        {
+            for ( IdentityAttribute attribute : identity.getAttributes( ).values( ) )
+            {
+                if ( ATTRIBUTE_IDENTITY_USER_GENDER.equals( attribute.getAttributeKey( ).getKeyName( ) ) )
+                {
+                    customer.setIdTitle( Integer.valueOf( getAttributeValue( attribute ) ) );
+                }
+
+                if ( ATTRIBUTE_IDENTITY_USER_NAME_GIVEN.equals( attribute.getAttributeKey( ).getKeyName( ) ) )
+                {
+                    customer.setFirstname( getAttributeValue( attribute ) );
+                }
+
+                if ( ATTRIBUTE_IDENTITY_USER_NAME_PREFERRED_NAME.equals( attribute.getAttributeKey( ).getKeyName( ) ) )
+                {
+                    customer.setLastname( getAttributeValue( attribute ) );
+                }
+
+                if ( ATTRIBUTE_IDENTITY_USER_HOMEINFO_ONLINE_EMAIL.equals( attribute.getAttributeKey( ).getKeyName( ) ) )
+                {
+                    customer.setEmail( getAttributeValue( attribute ) );
+                }
+
+                if ( ATTRIBUTE_IDENTITY_USER_HOMEINFO_TELECOM_TELEPHONE_NUMBER.equals( attribute.getAttributeKey( ).getKeyName( ) ) )
+                {
+                    customer.setFixedPhoneNumber( getAttributeValue( attribute ) );
+                }
+
+                if ( ATTRIBUTE_IDENTITY_USER_HOMEINFO_TELECOM_MOBILE_NUMBER.equals( attribute.getAttributeKey( ).getKeyName( ) ) )
+                {
+                    customer.setMobilePhone( getAttributeValue( attribute ) );
+                }
+
+                if ( ATTRIBUTE_IDENTITY_USER_BDATE.equals( attribute.getAttributeKey( ).getKeyName( ) ) )
+                {
+                    customer.setBirthDate( getAttributeValue( attribute ) );
+                }
+            }
+        }
+
+        return customer;
+    }
+
+    /**
+     * Gets the attribute value from the identityAttribute
+     * 
+     * @param identityAttribute
+     *            the identityAttribute
+     * @return {@code null} if the identityAttribute does not exist, the identityAttribute value otherwise
+     */
+    private String getAttributeValue( IdentityAttribute identityAttribute )
+    {
+        return ( identityAttribute.getValue( ) == null ) ? StringUtils.EMPTY : identityAttribute.getValue( );
     }
 }
