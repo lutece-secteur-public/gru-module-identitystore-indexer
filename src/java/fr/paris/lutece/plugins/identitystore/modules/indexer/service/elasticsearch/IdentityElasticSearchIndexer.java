@@ -50,81 +50,80 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
  */
 public class IdentityElasticSearchIndexer implements IIndexer
 {
-        
-        private static final String PROPERTY_ES_INDEXER_NAME = "identitystore-indexer.indexer.name";
-        private static final String PROPERTY_ES_INDEXER_DESCRIPTION = "identitystore-indexer.indexer.description";
-        private static final String PROPERTY_ES_INDEXER_VERSION = "identitystore-indexer.indexer.version";
-        private static final String PROPERTY_ES_INDEXER_ENABLE = "identitystore-indexer.indexer.enable";  
-        private static final String PLUGIN_NAME = "identitystore-indexer";
-        private static final String ENABLE_VALUE_TRUE = "1";
 
-        /**
-         * {@inheritDoc }
-         */
-        @Override
-        public String getName( )
+    private static final String PROPERTY_ES_INDEXER_NAME = "identitystore-indexer.indexer.name";
+    private static final String PROPERTY_ES_INDEXER_DESCRIPTION = "identitystore-indexer.indexer.description";
+    private static final String PROPERTY_ES_INDEXER_VERSION = "identitystore-indexer.indexer.version";
+    private static final String PROPERTY_ES_INDEXER_ENABLE = "identitystore-indexer.indexer.enable";
+    private static final String PLUGIN_NAME = "identitystore-indexer";
+    private static final String ENABLE_VALUE_TRUE = "1";
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public String getName( )
+    {
+        return AppPropertiesService.getProperty( PROPERTY_ES_INDEXER_NAME );
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public String getVersion( )
+    {
+        return AppPropertiesService.getProperty( PROPERTY_ES_INDEXER_VERSION );
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public String getDescription( )
+    {
+        return AppPropertiesService.getProperty( PROPERTY_ES_INDEXER_DESCRIPTION );
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public boolean isEnable( )
+    {
+        boolean bReturn = false;
+        String strEnable = AppPropertiesService.getProperty( PROPERTY_ES_INDEXER_ENABLE );
+
+        if ( ( Boolean.parseBoolean( strEnable ) || strEnable.equals( ENABLE_VALUE_TRUE ) ) && PluginService.isPluginEnable( PLUGIN_NAME ) )
         {
-            return AppPropertiesService.getProperty( PROPERTY_ES_INDEXER_NAME );
+            bReturn = true;
         }
 
-        /**
-         * {@inheritDoc }
-         */
-        @Override
-        public String getVersion( )
-        {
-            return AppPropertiesService.getProperty( PROPERTY_ES_INDEXER_VERSION );
-        }
+        return bReturn;
+    }
 
-        /**
-         * {@inheritDoc }
-         */
-        @Override
-        public String getDescription( )
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void indexAllElements( )
+    {
+        // Get all identity from the table
+        List<Identity> listIdentity = IdentityHome.getIdentitysList( );
+        if ( listIdentity != null && !listIdentity.isEmpty( ) )
         {
-            return AppPropertiesService.getProperty( PROPERTY_ES_INDEXER_DESCRIPTION );
-        }
-
-        /**
-         * {@inheritDoc }
-         */
-        @Override
-        public boolean isEnable( )
-        {
-            boolean bReturn = false;
-            String strEnable = AppPropertiesService.getProperty( PROPERTY_ES_INDEXER_ENABLE );
-
-            if ( ( Boolean.parseBoolean( strEnable ) || strEnable.equals( ENABLE_VALUE_TRUE ) )
-                    && PluginService.isPluginEnable( PLUGIN_NAME ) )
+            List<IndexerAction> listIndexerAction = new ArrayList<IndexerAction>( );
+            for ( Identity identity : listIdentity )
             {
-                bReturn = true;
+                IndexerAction indexerAction = new IndexerAction( );
+                indexerAction.setCustomerId( identity.getCustomerId( ) );
+                indexerAction.setTask( IndexerTask.CREATE );
+                listIndexerAction.add( indexerAction );
             }
 
-            return bReturn;
+            // Store all indetity in daemon indexer table
+            IndexerActionHome.createAll( listIndexerAction );
         }
-
-        /**
-         * {@inheritDoc }
-         */
-        @Override
-        public void indexAllElements( )
-        {
-            // Get all identity from the table
-            List<Identity> listIdentity = IdentityHome.getIdentitysList( );
-            if( listIdentity != null && !listIdentity.isEmpty( ) )
-            {
-                List<IndexerAction> listIndexerAction = new ArrayList<IndexerAction>( );
-                for ( Identity identity : listIdentity )
-                {
-                    IndexerAction indexerAction = new IndexerAction( );
-                    indexerAction.setCustomerId( identity.getCustomerId( ) );
-                    indexerAction.setTask( IndexerTask.CREATE );
-                    listIndexerAction.add( indexerAction );
-                }
-                
-                // Store all indetity in daemon indexer table
-                IndexerActionHome.createAll( listIndexerAction );
-            }
-        }
+    }
 
 }
