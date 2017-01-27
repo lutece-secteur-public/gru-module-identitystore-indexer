@@ -60,7 +60,6 @@ public class IdentityIndexerDaemon extends Daemon
     private static final String LOG_INDEX_UPDATED = "Number of updated indexes : ";
     private static final String LOG_INDEX_DELETED = "Number of deleted indexes : ";
     private static final String LOG_END_OF_SENTENCE = ". ";
-
     private static final String APPLICATION_CODE = AppPropertiesService.getProperty( IdentityConstants.PROPERTY_APPLICATION_CODE );
 
     /**
@@ -94,8 +93,9 @@ public class IdentityIndexerDaemon extends Daemon
      */
     private void indexCreatedIdentities( StringBuilder sbLogs )
     {
+        int nNbCreatedIdentities = indexIdentities( IndexerTask.CREATE );
         sbLogs.append( LOG_INDEX_CREATED );
-        sbLogs.append( indexUpdatedIdentities( IndexerTask.CREATE ) );
+        sbLogs.append( nNbCreatedIdentities );
         sbLogs.append( LOG_END_OF_SENTENCE );
     }
 
@@ -107,8 +107,9 @@ public class IdentityIndexerDaemon extends Daemon
      */
     private void indexUpdatedIdentities( StringBuilder sbLogs )
     {
+        int nNbUpdatedIdentities = indexIdentities( IndexerTask.UPDATE );
         sbLogs.append( LOG_INDEX_UPDATED );
-        sbLogs.append( indexUpdatedIdentities( IndexerTask.UPDATE ) );
+        sbLogs.append( nNbUpdatedIdentities );
         sbLogs.append( LOG_END_OF_SENTENCE );
     }
 
@@ -120,19 +121,20 @@ public class IdentityIndexerDaemon extends Daemon
      */
     private void indexDeletedIdentities( StringBuilder sbLogs )
     {
+        int nNbDeletedIdentities = indexIdentities( IndexerTask.DELETE );
         sbLogs.append( LOG_INDEX_DELETED );
-        sbLogs.append( 0 );
+        sbLogs.append( nNbDeletedIdentities );
         sbLogs.append( LOG_END_OF_SENTENCE );
     }
 
     /**
-     * Indexes updated identities
-     * 
+     * Indexes identities
+     *
      * @param indexerTask
      *            the indexer task
      * @return the number of indexed identities
      */
-    private int indexUpdatedIdentities( IndexerTask indexerTask )
+    private int indexIdentities( IndexerTask indexerTask )
     {
         int nNbIndexedIdentities = 0;
 
@@ -147,15 +149,34 @@ public class IdentityIndexerDaemon extends Daemon
             {
                 Identity identity = IdentityStoreService.getIdentityByCustomerId( indexerAction.getCustomerId( ), APPLICATION_CODE );
 
-                if ( identity != null )
+                IdentityChange identityChange = new IdentityChange( );
+
+                if ( identity == null )
                 {
-                    IdentityChange identityChange = new IdentityChange( );
+                    if ( indexerAction.getTask( ).getValue( ) == IndexerTask.DELETE.getValue( ) )
+                    {
+                        identity = new Identity( );
+                        identity.setCustomerId( indexerAction.getCustomerId( ) );
+                        identityChange.setIdentity( identity );
+                        identityChange.setChangeType( IdentityChangeType.valueOf( indexerAction.getTask( ).getValue( ) ) );
+                    }
+                    else
+                    {
+                        IndexerActionHome.remove( indexerAction.getIdAction( ) );
+                        AppLogService.error( "Try to index the customer " + indexerAction.getCustomerId( ) + " already removed" );
+                    }
+                }
+                else
+                {
                     identityChange.setIdentity( identity );
                     identityChange.setChangeType( IdentityChangeType.valueOf( indexerAction.getTask( ).getValue( ) ) );
+                }
 
+                if ( identity != null )
+                {
                     try
                     {
-                        IndexService.instance( ).index( identityChange );
+                        IndexService.instance( ).process( identityChange );
 
                         IndexerActionHome.remove( indexerAction.getIdAction( ) );
 
