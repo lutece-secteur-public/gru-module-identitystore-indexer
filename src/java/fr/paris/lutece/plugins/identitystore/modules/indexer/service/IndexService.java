@@ -33,9 +33,6 @@
  */
 package fr.paris.lutece.plugins.identitystore.modules.indexer.service;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.apache.commons.lang.StringUtils;
 
 import fr.paris.lutece.plugins.grubusiness.business.customer.Customer;

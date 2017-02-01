@@ -103,7 +103,7 @@ public class LuceneCustomerService implements IIndexingService<Customer>
             Directory dir = FSDirectory.open( getIndexPath( ) );
             IndexWriterConfig iwc = new IndexWriterConfig( Version.LUCENE_4_9, getAnalyzer( ) );
 
-            iwc.setOpenMode( OpenMode.CREATE );
+            iwc.setOpenMode( OpenMode.CREATE_OR_APPEND );
 
             IndexWriter writer = new IndexWriter( dir, iwc );
 
@@ -240,7 +240,7 @@ public class LuceneCustomerService implements IIndexingService<Customer>
             Directory dir = FSDirectory.open( getIndexPath( ) );
             IndexWriterConfig iwc = new IndexWriterConfig( Version.LUCENE_4_9, getAnalyzer( ) );
 
-            iwc.setOpenMode( OpenMode.CREATE );
+            iwc.setOpenMode( OpenMode.CREATE_OR_APPEND );
 
             IndexWriter writer = new IndexWriter( dir, iwc );
 
