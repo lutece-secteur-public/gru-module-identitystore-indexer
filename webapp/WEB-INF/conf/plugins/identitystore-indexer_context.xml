@@ -15,8 +15,8 @@
 		class="fr.paris.lutece.plugins.identitystore.modules.indexer.business.IndexerActionDAO" />
 
     <!-- STORAGE SERVICE -->
-   <bean id="identitystore-indexer.customerIndexService" class="fr.paris.lutece.plugins.identitystore.modules.indexer.service.LuceneCustomerService"/>
-    <!-- <bean id="identitystore-indexer.customerIndexService" class="fr.paris.lutece.plugins.grustorageelastic.service.ElasticCustomerIndexingService"/> -->
+   <bean id="identitystore-indexer.customerIndexService" class="fr.paris.lutece.plugins.grustorageelastic.service.lucene.LuceneCustomerIndexingService"/>
+   <!--  <bean id="identitystore-indexer.customerIndexService" class="fr.paris.lutece.plugins.grustorageelastic.service.ElasticCustomerIndexingService"/> -->
 
 	<!-- Services -->
 	<bean id="identitystore-indexer.listener.indexer" 
