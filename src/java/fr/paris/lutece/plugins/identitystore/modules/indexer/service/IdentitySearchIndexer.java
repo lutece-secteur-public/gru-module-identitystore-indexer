@@ -135,8 +135,7 @@ public class IdentitySearchIndexer implements SearchIndexer
      * {@inheritDoc }
      */
     @Override
-    public List<Document> getDocuments( String strIdDocument )
-            throws IOException, InterruptedException, SiteMessageException
+    public List<Document> getDocuments( String strIdDocument ) throws IOException, InterruptedException, SiteMessageException
     {
         return new ArrayList<Document>( );
     }
