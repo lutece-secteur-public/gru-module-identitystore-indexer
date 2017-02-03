@@ -31,24 +31,29 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.identitystore.modules.indexer.service.elasticsearch;
+package fr.paris.lutece.plugins.identitystore.modules.indexer.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.paris.lutece.plugins.grubusiness.business.indexing.IIndexer;
+import org.apache.commons.lang.StringUtils;
+import org.apache.lucene.document.Document;
+
 import fr.paris.lutece.plugins.identitystore.business.Identity;
 import fr.paris.lutece.plugins.identitystore.business.IdentityHome;
 import fr.paris.lutece.plugins.identitystore.modules.indexer.business.IndexerAction;
 import fr.paris.lutece.plugins.identitystore.modules.indexer.business.IndexerActionHome;
 import fr.paris.lutece.plugins.identitystore.modules.indexer.business.IndexerTask;
+import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.plugin.PluginService;
+import fr.paris.lutece.portal.service.search.SearchIndexer;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
 /**
  * Implementation of the IElasticSearchIndexer interface for Identity
  */
-public class IdentityElasticSearchIndexer implements IIndexer
+public class IdentitySearchIndexer implements SearchIndexer
 {
 
     private static final String PROPERTY_ES_INDEXER_NAME = "identitystore-indexer.indexer.name";
@@ -106,7 +111,7 @@ public class IdentityElasticSearchIndexer implements IIndexer
      * {@inheritDoc }
      */
     @Override
-    public void indexAllElements( )
+    public void indexDocuments( )
     {
         // Get all identity from the table
         List<Identity> listIdentity = IdentityHome.getIdentitysList( );
@@ -124,6 +129,34 @@ public class IdentityElasticSearchIndexer implements IIndexer
             // Store all indetity in daemon indexer table
             IndexerActionHome.createAll( listIndexerAction );
         }
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public List<Document> getDocuments( String strIdDocument )
+            throws IOException, InterruptedException, SiteMessageException
+    {
+        return new ArrayList<Document>( );
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public List<String> getListType( )
+    {
+        return new ArrayList<String>( );
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public String getSpecificSearchAppUrl( )
+    {
+        return StringUtils.EMPTY;
     }
 
 }
