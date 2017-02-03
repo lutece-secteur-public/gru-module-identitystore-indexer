@@ -151,7 +151,7 @@ public final class IndexService
         Customer customer = new Customer( );
 
         customer.setId( identity.getCustomerId( ) );
-        customer.setAccountGuid( identity.getConnectionId( ) );
+        customer.setConnectionId( identity.getConnectionId( ) );
 
         if ( identity.getAttributes( ) != null )
         {
