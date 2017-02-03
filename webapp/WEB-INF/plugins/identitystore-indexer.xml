@@ -38,6 +38,15 @@
     <applications>
     </applications>
     
+    <!-- Search Indexer Service -->
+    <search-indexers>
+        <search-indexer>
+            <search-indexer-class>
+                fr.paris.lutece.plugins.identitystore.modules.indexer.service.IdentitySearchIndexer
+            </search-indexer-class>
+        </search-indexer>
+    </search-indexers>
+    
     <!-- Portlet parameters -->
     <portlets>
    	</portlets>
