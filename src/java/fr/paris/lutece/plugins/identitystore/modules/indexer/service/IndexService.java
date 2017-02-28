@@ -159,7 +159,8 @@ public final class IndexService
             {
                 if ( ATTRIBUTE_IDENTITY_USER_GENDER.equals( attribute.getAttributeKey( ).getKeyName( ) ) )
                 {
-                    customer.setIdTitle( Integer.valueOf( getAttributeValue( attribute ) ) );
+                    String strGender = getAttributeValue( attribute );
+                    customer.setIdTitle( StringUtils.isBlank( strGender ) || !StringUtils.isNumeric( strGender ) ? 0 : Integer.parseInt( strGender ) );
                 }
 
                 if ( ATTRIBUTE_IDENTITY_USER_NAME_GIVEN.equals( attribute.getAttributeKey( ).getKeyName( ) ) )
