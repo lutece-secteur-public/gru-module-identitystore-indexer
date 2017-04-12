@@ -40,7 +40,6 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.document.Document;
 
-import fr.paris.lutece.plugins.identitystore.business.Identity;
 import fr.paris.lutece.plugins.identitystore.business.IdentityHome;
 import fr.paris.lutece.plugins.identitystore.modules.indexer.business.IndexerAction;
 import fr.paris.lutece.plugins.identitystore.modules.indexer.business.IndexerActionHome;
@@ -48,6 +47,7 @@ import fr.paris.lutece.plugins.identitystore.modules.indexer.business.IndexerTas
 import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.search.SearchIndexer;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
 /**
@@ -60,6 +60,7 @@ public class IdentitySearchIndexer implements SearchIndexer
     private static final String PROPERTY_ES_INDEXER_DESCRIPTION = "identitystore-indexer.indexer.description";
     private static final String PROPERTY_ES_INDEXER_VERSION = "identitystore-indexer.indexer.version";
     private static final String PROPERTY_ES_INDEXER_ENABLE = "identitystore-indexer.indexer.enable";
+    private static final String PROPERTY_INDEXER_NB_INSERT = "identitystore-indexer.indexer.nb.insert";
     private static final String PLUGIN_NAME = "identitystore-indexer";
     private static final String ENABLE_VALUE_TRUE = "1";
 
@@ -114,21 +115,52 @@ public class IdentitySearchIndexer implements SearchIndexer
     public void indexDocuments( )
     {
         // Get all identity from the table
-        List<Identity> listIdentity = IdentityHome.getIdentitysList( );
-        if ( listIdentity != null && !listIdentity.isEmpty( ) )
-        {
-            List<IndexerAction> listIndexerAction = new ArrayList<IndexerAction>( );
-            for ( Identity identity : listIdentity )
-            {
-                IndexerAction indexerAction = new IndexerAction( );
-                indexerAction.setCustomerId( identity.getCustomerId( ) );
-                indexerAction.setTask( IndexerTask.CREATE );
-                listIndexerAction.add( indexerAction );
-            }
-
-            // Store all indetity in daemon indexer table
-            IndexerActionHome.createAll( listIndexerAction );
-        }
+    	boolean bMoreIdentity = true;
+    	String strLimit = AppPropertiesService.getProperty( PROPERTY_INDEXER_NB_INSERT );
+    	int nLimit = -1;
+    	int nStart = 0; 
+    	try
+    	{
+    		nLimit = Integer.parseInt( strLimit );
+    	}
+    	catch ( NumberFormatException e )
+    	{
+    		AppLogService.debug( "Propertie [" + PROPERTY_INDEXER_NB_INSERT +"] is not a number [" + strLimit +"]" );
+    		nLimit = -1;
+    	}
+    	while( bMoreIdentity )
+    	{
+	        List<String> listCustomerIds;
+	        if( nLimit > 0)
+	        {
+	        	listCustomerIds = IdentityHome.getCustomerIdList( nStart, nLimit );
+	        	nStart = nStart + nLimit;
+	        	bMoreIdentity = ( listCustomerIds.size( ) < nLimit );
+	        }
+	        else
+	        {
+	        	listCustomerIds = IdentityHome.getCustomerIdsList( );
+	        }
+	        
+	        if ( listCustomerIds != null && !listCustomerIds.isEmpty( ) )
+	        {
+	            List<IndexerAction> listIndexerAction = new ArrayList<IndexerAction>( );
+	            for ( String strCustomerId : listCustomerIds )
+	            {
+	                IndexerAction indexerAction = new IndexerAction( );
+	                indexerAction.setCustomerId( strCustomerId );
+	                indexerAction.setTask( IndexerTask.CREATE );
+	                listIndexerAction.add( indexerAction );
+	            }
+	
+	            // Store all indetity in daemon indexer table
+	            IndexerActionHome.createAll( listIndexerAction );
+	        }
+	        else
+	        {
+	        	bMoreIdentity = false;
+	        }
+    	}
     }
 
     /**
