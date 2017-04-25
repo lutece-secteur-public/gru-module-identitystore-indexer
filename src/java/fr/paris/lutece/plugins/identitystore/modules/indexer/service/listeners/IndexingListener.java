@@ -51,8 +51,14 @@ import java.util.List;
 public class IndexingListener implements IdentityChangeListener
 {
     private static final String SERVICE_NAME = "Identity indexing listener";
+    private IndexService _indexService;
 
-    @Override
+    public void setIndexService( IndexService indexService )
+    {
+    	_indexService = indexService;
+    }
+
+	@Override
     public String getName( )
     {
         return SERVICE_NAME;
@@ -63,7 +69,7 @@ public class IndexingListener implements IdentityChangeListener
     {
         try
         {
-            IndexService.instance( ).process( identityChange );
+        	_indexService.process( identityChange );
         }
         catch( IndexingException ex )
         {

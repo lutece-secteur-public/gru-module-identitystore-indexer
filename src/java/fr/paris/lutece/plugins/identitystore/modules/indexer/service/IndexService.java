@@ -43,16 +43,15 @@ import fr.paris.lutece.plugins.identitystore.business.IdentityAttribute;
 import fr.paris.lutece.plugins.identitystore.business.IdentityConstants;
 import fr.paris.lutece.plugins.identitystore.service.IdentityChange;
 import fr.paris.lutece.plugins.identitystore.service.IdentityChangeType;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
 /**
  * This class represents a service for indexing
  */
-public final class IndexService
+public class IndexService
 {
-    private static IndexService _singleton;
-
+	public static final String BEAN_NAME = "identitystore-indexer.indexService";
+	
     private static final String ATTRIBUTE_IDENTITY_USER_GENDER = AppPropertiesService.getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_GENDER );
     private static final String ATTRIBUTE_IDENTITY_USER_NAME_GIVEN = AppPropertiesService.getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_NAME_GIVEN );
     private static final String ATTRIBUTE_IDENTITY_USER_NAME_PREFERRED_NAME = AppPropertiesService
@@ -64,29 +63,12 @@ public final class IndexService
     private static final String ATTRIBUTE_IDENTITY_USER_HOMEINFO_TELECOM_MOBILE_NUMBER = AppPropertiesService
             .getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_HOMEINFO_TELECOM_MOBILE_NUMBER );
     private static final String ATTRIBUTE_IDENTITY_USER_BDATE = AppPropertiesService.getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_BDATE );
-    private static final String BEAN_INDEX_SERVICE = "identitystore-indexer.customerIndexService";
 
-    private static IIndexingService<Customer> _customerIndexService;
-
-    /** private constructor */
-    private IndexService( )
+    private IIndexingService<Customer> _customerIndexService;
+    
+    public void setCustomerIndexService( IIndexingService<Customer> customerIndexService )
     {
-    }
-
-    /**
-     * Returns the unique instance
-     * 
-     * @return The unique instance
-     */
-    public static IndexService instance( )
-    {
-        if ( _singleton == null )
-        {
-            _singleton = new IndexService( );
-            _customerIndexService = SpringContextService.getBean( BEAN_INDEX_SERVICE );
-        }
-
-        return _singleton;
+    	_customerIndexService = customerIndexService;
     }
 
     /**

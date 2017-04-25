@@ -45,6 +45,7 @@ import fr.paris.lutece.plugins.identitystore.service.IdentityChange;
 import fr.paris.lutece.plugins.identitystore.service.IdentityChangeType;
 import fr.paris.lutece.plugins.identitystore.service.IdentityStoreService;
 import fr.paris.lutece.portal.service.daemon.Daemon;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
@@ -61,6 +62,7 @@ public class IdentityIndexerDaemon extends Daemon
     private static final String LOG_INDEX_DELETED = "Number of deleted indexes : ";
     private static final String LOG_END_OF_SENTENCE = ". ";
     private static final String APPLICATION_CODE = AppPropertiesService.getProperty( IdentityConstants.PROPERTY_APPLICATION_CODE );
+    private IndexService _indexService;
 
     /**
      * Constructor
@@ -68,6 +70,7 @@ public class IdentityIndexerDaemon extends Daemon
     public IdentityIndexerDaemon( )
     {
         super( );
+        _indexService = SpringContextService.getBean( IndexService.BEAN_NAME );
     }
 
     /**
@@ -176,7 +179,7 @@ public class IdentityIndexerDaemon extends Daemon
                 {
                     try
                     {
-                        IndexService.instance( ).process( identityChange );
+                    	_indexService.process( identityChange );
 
                         IndexerActionHome.remove( indexerAction.getIdAction( ) );
 

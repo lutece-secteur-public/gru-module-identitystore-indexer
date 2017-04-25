@@ -13,12 +13,16 @@
 	<!-- DAO -->
 	<bean id="identitystore-indexer.indexerActionDAO"
 		class="fr.paris.lutece.plugins.identitystore.modules.indexer.business.IndexerActionDAO" />
-
-    <!-- STORAGE SERVICE -->
-   <bean id="identitystore-indexer.customerIndexService" class="fr.paris.lutece.plugins.grustorageelastic.service.lucene.LuceneCustomerIndexingService"/>
-   <!--  <bean id="identitystore-indexer.customerIndexService" class="fr.paris.lutece.plugins.grustorageelastic.service.ElasticCustomerIndexingService"/> -->
+        
+    <!-- Index Service -->
+    <!-- MUST BE OVERRIDE -->
+    <bean id="identitystore-indexer.mockCustomerIndexer" class="fr.paris.lutece.plugins.identitystore.modules.indexer.service.mock.MockCustomerIndexingService" />
+    <bean id="identitystore-indexer.indexService" class="fr.paris.lutece.plugins.identitystore.modules.indexer.service.IndexService">
+        <property name="customerIndexService" ref="identitystore-indexer.mockCustomerIndexer"/>
+    </bean>
 
 	<!-- Services -->
-	<bean id="identitystore-indexer.listener.indexer" 
-        class="fr.paris.lutece.plugins.identitystore.modules.indexer.service.listeners.IndexingListener" />
+	<bean id="identitystore-indexer.listener.indexer" class="fr.paris.lutece.plugins.identitystore.modules.indexer.service.listeners.IndexingListener" >
+        <property name="indexService" ref="identitystore-indexer.indexService" />
+    </bean>
 </beans>
