@@ -115,52 +115,52 @@ public class IdentitySearchIndexer implements SearchIndexer
     public void indexDocuments( )
     {
         // Get all identity from the table
-    	boolean bMoreIdentity = true;
-    	String strLimit = AppPropertiesService.getProperty( PROPERTY_INDEXER_NB_INSERT );
-    	int nLimit = -1;
-    	int nStart = 0; 
-    	try
-    	{
-    		nLimit = Integer.parseInt( strLimit );
-    	}
-    	catch ( NumberFormatException e )
-    	{
-    		AppLogService.debug( "Propertie [" + PROPERTY_INDEXER_NB_INSERT +"] is not a number [" + strLimit +"]" );
-    		nLimit = -1;
-    	}
-    	while( bMoreIdentity )
-    	{
-	        List<String> listCustomerIds;
-	        if( nLimit > 0)
-	        {
-	        	listCustomerIds = IdentityHome.getCustomerIdList( nStart, nLimit );
-	        	nStart = nStart + nLimit;
-	        	bMoreIdentity = ( listCustomerIds.size( ) < nLimit );
-	        }
-	        else
-	        {
-	        	listCustomerIds = IdentityHome.getCustomerIdsList( );
-	        }
-	        
-	        if ( listCustomerIds != null && !listCustomerIds.isEmpty( ) )
-	        {
-	            List<IndexerAction> listIndexerAction = new ArrayList<IndexerAction>( );
-	            for ( String strCustomerId : listCustomerIds )
-	            {
-	                IndexerAction indexerAction = new IndexerAction( );
-	                indexerAction.setCustomerId( strCustomerId );
-	                indexerAction.setTask( IndexerTask.CREATE );
-	                listIndexerAction.add( indexerAction );
-	            }
-	
-	            // Store all indetity in daemon indexer table
-	            IndexerActionHome.createAll( listIndexerAction );
-	        }
-	        else
-	        {
-	        	bMoreIdentity = false;
-	        }
-    	}
+        boolean bMoreIdentity = true;
+        String strLimit = AppPropertiesService.getProperty( PROPERTY_INDEXER_NB_INSERT );
+        int nLimit = -1;
+        int nStart = 0;
+        try
+        {
+            nLimit = Integer.parseInt( strLimit );
+        }
+        catch( NumberFormatException e )
+        {
+            AppLogService.debug( "Propertie [" + PROPERTY_INDEXER_NB_INSERT + "] is not a number [" + strLimit + "]" );
+            nLimit = -1;
+        }
+        while ( bMoreIdentity )
+        {
+            List<String> listCustomerIds;
+            if ( nLimit > 0 )
+            {
+                listCustomerIds = IdentityHome.getCustomerIdList( nStart, nLimit );
+                nStart = nStart + nLimit;
+                bMoreIdentity = ( listCustomerIds.size( ) < nLimit );
+            }
+            else
+            {
+                listCustomerIds = IdentityHome.getCustomerIdsList( );
+            }
+
+            if ( listCustomerIds != null && !listCustomerIds.isEmpty( ) )
+            {
+                List<IndexerAction> listIndexerAction = new ArrayList<IndexerAction>( );
+                for ( String strCustomerId : listCustomerIds )
+                {
+                    IndexerAction indexerAction = new IndexerAction( );
+                    indexerAction.setCustomerId( strCustomerId );
+                    indexerAction.setTask( IndexerTask.CREATE );
+                    listIndexerAction.add( indexerAction );
+                }
+
+                // Store all indetity in daemon indexer table
+                IndexerActionHome.createAll( listIndexerAction );
+            }
+            else
+            {
+                bMoreIdentity = false;
+            }
+        }
     }
 
     /**

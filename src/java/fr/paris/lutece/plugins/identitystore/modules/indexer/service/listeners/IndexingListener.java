@@ -55,10 +55,10 @@ public class IndexingListener implements IdentityChangeListener
 
     public void setIndexService( IndexService indexService )
     {
-    	_indexService = indexService;
+        _indexService = indexService;
     }
 
-	@Override
+    @Override
     public String getName( )
     {
         return SERVICE_NAME;
@@ -69,7 +69,7 @@ public class IndexingListener implements IdentityChangeListener
     {
         try
         {
-        	_indexService.process( identityChange );
+            _indexService.process( identityChange );
         }
         catch( IndexingException ex )
         {

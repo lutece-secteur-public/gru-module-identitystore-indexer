@@ -179,7 +179,7 @@ public class IdentityIndexerDaemon extends Daemon
                 {
                     try
                     {
-                    	_indexService.process( identityChange );
+                        _indexService.process( identityChange );
 
                         IndexerActionHome.remove( indexerAction.getIdAction( ) );
 

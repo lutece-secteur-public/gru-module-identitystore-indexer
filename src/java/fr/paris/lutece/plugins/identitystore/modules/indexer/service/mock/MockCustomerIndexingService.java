@@ -44,24 +44,24 @@ import fr.paris.lutece.portal.service.util.AppLogService;
 public class MockCustomerIndexingService implements IIndexingService<Customer>
 {
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void index( Customer customer ) throws IndexingException
     {
-	    // mock do nothing	
-    	AppLogService.error( "Customer " + customer.getId( ) + " is not indexed, using MockCustomerIndexingService");
+        // mock do nothing
+        AppLogService.error( "Customer " + customer.getId( ) + " is not indexed, using MockCustomerIndexingService" );
     }
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void deleteIndex( Customer customer ) throws IndexingException
     {
-    	// mock do nothing	    
-    	AppLogService.error( "Customer " + customer.getId( ) + " is not deleted from index, using MockCustomerIndexingService");
+        // mock do nothing
+        AppLogService.error( "Customer " + customer.getId( ) + " is not deleted from index, using MockCustomerIndexingService" );
     }
 
 }

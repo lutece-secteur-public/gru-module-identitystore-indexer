@@ -50,8 +50,8 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
  */
 public class IndexService
 {
-	public static final String BEAN_NAME = "identitystore-indexer.indexService";
-	
+    public static final String BEAN_NAME = "identitystore-indexer.indexService";
+
     private static final String ATTRIBUTE_IDENTITY_USER_GENDER = AppPropertiesService.getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_GENDER );
     private static final String ATTRIBUTE_IDENTITY_USER_NAME_GIVEN = AppPropertiesService.getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_NAME_GIVEN );
     private static final String ATTRIBUTE_IDENTITY_USER_NAME_PREFERRED_NAME = AppPropertiesService
@@ -65,10 +65,10 @@ public class IndexService
     private static final String ATTRIBUTE_IDENTITY_USER_BDATE = AppPropertiesService.getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_BDATE );
 
     private IIndexingService<Customer> _customerIndexService;
-    
+
     public void setCustomerIndexService( IIndexingService<Customer> customerIndexService )
     {
-    	_customerIndexService = customerIndexService;
+        _customerIndexService = customerIndexService;
     }
 
     /**
