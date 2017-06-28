@@ -44,6 +44,7 @@ import fr.paris.lutece.plugins.identitystore.business.IdentityConstants;
 import fr.paris.lutece.plugins.identitystore.service.IdentityChange;
 import fr.paris.lutece.plugins.identitystore.service.IdentityChangeType;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import fr.paris.lutece.util.string.StringUtil;
 
 /**
  * This class represents a service for indexing
@@ -63,6 +64,7 @@ public class IndexService
     private static final String ATTRIBUTE_IDENTITY_USER_HOMEINFO_TELECOM_MOBILE_NUMBER = AppPropertiesService
             .getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_HOMEINFO_TELECOM_MOBILE_NUMBER );
     private static final String ATTRIBUTE_IDENTITY_USER_BDATE = AppPropertiesService.getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_BDATE );
+	private static final String ATTRIBUTE_IDENTITY_USER_NAME_FAMILY_NAME = AppPropertiesService.getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_FAMILY_NAME );
 
     private IIndexingService<Customer> _customerIndexService;
 
@@ -137,6 +139,7 @@ public class IndexService
 
         if ( identity.getAttributes( ) != null )
         {
+        	
             for ( IdentityAttribute attribute : identity.getAttributes( ).values( ) )
             {
                 if ( ATTRIBUTE_IDENTITY_USER_GENDER.equals( attribute.getAttributeKey( ).getKeyName( ) ) )
@@ -153,6 +156,11 @@ public class IndexService
                 if ( ATTRIBUTE_IDENTITY_USER_NAME_PREFERRED_NAME.equals( attribute.getAttributeKey( ).getKeyName( ) ) )
                 {
                     customer.setLastname( getAttributeValue( attribute ) );
+                }
+                
+                if ( ATTRIBUTE_IDENTITY_USER_NAME_FAMILY_NAME.equals( attribute.getAttributeKey( ).getKeyName( ) ) )
+                {
+                    customer.setFamilyname( getAttributeValue( attribute ) );
                 }
 
                 if ( ATTRIBUTE_IDENTITY_USER_HOMEINFO_ONLINE_EMAIL.equals( attribute.getAttributeKey( ).getKeyName( ) ) )
@@ -175,6 +183,8 @@ public class IndexService
                     customer.setBirthDate( getAttributeValue( attribute ) );
                 }
             }
+            
+            
         }
 
         return customer;
