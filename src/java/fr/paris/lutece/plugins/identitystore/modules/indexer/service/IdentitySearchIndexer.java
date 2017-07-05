@@ -60,7 +60,6 @@ public class IdentitySearchIndexer implements SearchIndexer
     private static final String PROPERTY_ES_INDEXER_DESCRIPTION = "identitystore-indexer.indexer.description";
     private static final String PROPERTY_ES_INDEXER_VERSION = "identitystore-indexer.indexer.version";
     private static final String PROPERTY_ES_INDEXER_ENABLE = "identitystore-indexer.indexer.enable";
-    private static final String PROPERTY_INDEXER_NB_INSERT = "identitystore-indexer.indexer.nb.insert";
     private static final String PLUGIN_NAME = "identitystore-indexer";
     private static final String ENABLE_VALUE_TRUE = "1";
 
@@ -114,53 +113,11 @@ public class IdentitySearchIndexer implements SearchIndexer
     @Override
     public void indexDocuments( )
     {
-        // Get all identity from the table
-        boolean bMoreIdentity = true;
-        String strLimit = AppPropertiesService.getProperty( PROPERTY_INDEXER_NB_INSERT );
-        int nLimit = -1;
-        int nStart = 0;
-        try
-        {
-            nLimit = Integer.parseInt( strLimit );
-        }
-        catch( NumberFormatException e )
-        {
-            AppLogService.debug( "Propertie [" + PROPERTY_INDEXER_NB_INSERT + "] is not a number [" + strLimit + "]" );
-            nLimit = -1;
-        }
-        while ( bMoreIdentity )
-        {
-            List<String> listCustomerIds;
-            if ( nLimit > 0 )
-            {
-                listCustomerIds = IdentityHome.getCustomerIdList( nStart, nLimit );
-                nStart = nStart + nLimit;
-                bMoreIdentity = ( listCustomerIds.size( ) < nLimit );
-            }
-            else
-            {
-                listCustomerIds = IdentityHome.getCustomerIdsList( );
-            }
-
-            if ( listCustomerIds != null && !listCustomerIds.isEmpty( ) )
-            {
-                List<IndexerAction> listIndexerAction = new ArrayList<IndexerAction>( );
-                for ( String strCustomerId : listCustomerIds )
-                {
-                    IndexerAction indexerAction = new IndexerAction( );
-                    indexerAction.setCustomerId( strCustomerId );
-                    indexerAction.setTask( IndexerTask.CREATE );
-                    listIndexerAction.add( indexerAction );
-                }
-
-                // Store all indetity in daemon indexer table
-                IndexerActionHome.createAll( listIndexerAction );
-            }
-            else
-            {
-                bMoreIdentity = false;
-            }
-        }
+        //First remove all indexer actions stored
+        IndexerActionHome.deleteAll( );
+        
+        // Then store all indetity in daemon indexer table
+        IndexerActionHome.createAllByIdTask( IndexerTask.CREATE.getValue( ) );
     }
 
     /**

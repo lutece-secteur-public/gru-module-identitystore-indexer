@@ -57,7 +57,9 @@ public final class IndexerActionDAO implements IIndexerActionDAO
     private static final String SQL_QUERY_DELETE = "DELETE FROM identitystore_identity_indexer_action WHERE id_action = ? ";
     private static final String SQL_FILTER_ID_TASK = " id_task = ? ";
     private static final String SQL_FILTER_ID_CUSTOMER = " id_customer = ? ";
-
+    private static final String SQL_QUERY_INSERT_ALL_BY_ID_TASK = "INSERT INTO identitystore_identity_indexer_action SELECT ? + id_identity, customer_id, ? FROM identitystore_identity";  
+    private static final String SQL_QUERY_DELETE_ALL = "TRUNCATE identitystore_identity_indexer_action";
+    
     /**
      * {@inheritDoc}
      */
@@ -243,5 +245,30 @@ public final class IndexerActionDAO implements IIndexerActionDAO
         }
 
         return strBuffer.toString( );
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public synchronized void deleteAll( Plugin plugin )
+    {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_ALL, plugin );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public synchronized void insertAllByIdTask( int nIdTask, Plugin plugin )
+    {
+        int nIdActionMax = newPrimaryKey( plugin );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT_ALL_BY_ID_TASK, plugin );
+        daoUtil.setInt( 1, nIdActionMax + 1 );
+        daoUtil.setInt( 2, nIdTask );
+        daoUtil.executeUpdate( );
+        daoUtil.free( );
     }
 }

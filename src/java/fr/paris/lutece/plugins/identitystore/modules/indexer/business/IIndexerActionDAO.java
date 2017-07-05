@@ -93,4 +93,20 @@ public interface IIndexerActionDAO
      * @return The list which contains the data of all actions
      */
     List<IndexerAction> selectList( IndexerActionFilter filter, Plugin plugin );
+    
+    /**
+     * Delete all the indexer action
+     * @param plugin
+     *             the plugin
+     */
+    void deleteAll( Plugin plugin );
+        
+    /**
+     * Insert all the indexer action with given task id
+     * @param nIdTask
+     *             the id task of indexer action to insert
+     * @param plugin
+     *             the plugin
+     */
+    void insertAllByIdTask( int nIdTask, Plugin plugin );
 }

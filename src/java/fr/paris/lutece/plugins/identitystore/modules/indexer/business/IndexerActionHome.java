@@ -70,12 +70,20 @@ public final class IndexerActionHome
     /**
      * Creation of a list of IndexerAction
      * 
-     * @param listIndexerActions
-     *            The list of the indexer actions
+     * @param nIdTask
+     *            The id of the indexer task
      */
-    public static synchronized void createAll( List<IndexerAction> listIndexerActions )
-    {
-        _dao.insertAll( listIndexerActions, _plugin );
+    public static synchronized void createAllByIdTask( int nIdTask )
+    {        
+        _dao.insertAllByIdTask( nIdTask, _plugin );
+    }
+    
+    /**
+     * Delete all the IndexerAction
+     */
+    public static synchronized void deleteAll( )
+    {        
+        _dao.deleteAll( _plugin );
     }
 
     /**
