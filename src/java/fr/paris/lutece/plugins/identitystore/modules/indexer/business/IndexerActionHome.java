@@ -74,16 +74,19 @@ public final class IndexerActionHome
      *            The id of the indexer task
      */
     public static synchronized void createAllByIdTask( int nIdTask )
-    {        
+    {
         _dao.insertAllByIdTask( nIdTask, _plugin );
     }
-    
+
     /**
-     * Delete all the IndexerAction
+     * Delete all the IndexerAction with given filter
+     * 
+     * @param filter
+     *            the filter
      */
-    public static synchronized void deleteAll( )
-    {        
-        _dao.deleteAll( _plugin );
+    public static synchronized void deleteByFilter( IndexerActionFilter filter )
+    {
+        _dao.deleteByFilter( filter, _plugin );
     }
 
     /**
@@ -105,10 +108,14 @@ public final class IndexerActionHome
      * 
      * @param filter
      *            the filter
+     * @param nStart
+     *            the started row
+     * @param nLimit
+     *            the limit ( nb of row to return )
      * @return the list which contains the data of all the indexerAction
      */
-    public static List<IndexerAction> getList( IndexerActionFilter filter )
+    public static List<IndexerAction> getListLimit( IndexerActionFilter filter, int nStart, int nLimit )
     {
-        return _dao.selectList( filter, _plugin );
+        return _dao.selectListLimit( filter, nStart, nLimit, _plugin );
     }
 }

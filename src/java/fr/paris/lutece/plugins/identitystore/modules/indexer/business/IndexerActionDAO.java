@@ -57,9 +57,10 @@ public final class IndexerActionDAO implements IIndexerActionDAO
     private static final String SQL_QUERY_DELETE = "DELETE FROM identitystore_identity_indexer_action WHERE id_action = ? ";
     private static final String SQL_FILTER_ID_TASK = " id_task = ? ";
     private static final String SQL_FILTER_ID_CUSTOMER = " id_customer = ? ";
-    private static final String SQL_QUERY_INSERT_ALL_BY_ID_TASK = "INSERT INTO identitystore_identity_indexer_action SELECT ? + id_identity, customer_id, ? FROM identitystore_identity";  
-    private static final String SQL_QUERY_DELETE_ALL = "TRUNCATE identitystore_identity_indexer_action";
-    
+    private static final String SQL_LIMIT = " LIMIT ?, ? ";
+    private static final String SQL_QUERY_INSERT_ALL_BY_ID_TASK = "INSERT INTO identitystore_identity_indexer_action SELECT ? + id_identity, customer_id, ? FROM identitystore_identity";
+    private static final String SQL_QUERY_DELETE_ALL = "DELETE FROM identitystore_identity_indexer_action";
+
     /**
      * {@inheritDoc}
      */
@@ -156,7 +157,7 @@ public final class IndexerActionDAO implements IIndexerActionDAO
      * {@inheritDoc}
      */
     @Override
-    public List<IndexerAction> selectList( IndexerActionFilter filter, Plugin plugin )
+    public List<IndexerAction> selectListLimit( IndexerActionFilter filter, int nStart, int nLimit, Plugin plugin )
     {
         List<IndexerAction> indexerActionList = new ArrayList<IndexerAction>( );
         IndexerAction indexerAction = null;
@@ -174,6 +175,15 @@ public final class IndexerActionDAO implements IIndexerActionDAO
 
         String strSQL = buildRequestWithFilter( SQL_QUERY_SELECT, listStrFilter, null );
 
+        boolean bLimit = ( nLimit != -1 );
+        if ( bLimit )
+        {
+            StringBuffer stringBuffer = new StringBuffer( );
+            stringBuffer.append( strSQL );
+            stringBuffer.append( SQL_LIMIT );
+            strSQL = stringBuffer.toString( );
+        }
+
         DAOUtil daoUtil = new DAOUtil( strSQL, plugin );
 
         int nIndex = 1;
@@ -187,6 +197,13 @@ public final class IndexerActionDAO implements IIndexerActionDAO
         if ( filter.containsCustomerId( ) )
         {
             daoUtil.setString( nIndex, filter.getCustomerId( ) );
+            nIndex++;
+        }
+
+        if ( bLimit )
+        {
+            daoUtil.setInt( nIndex++, nStart );
+            daoUtil.setInt( nIndex, nLimit );
         }
 
         daoUtil.executeQuery( );
@@ -246,18 +263,29 @@ public final class IndexerActionDAO implements IIndexerActionDAO
 
         return strBuffer.toString( );
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public synchronized void deleteAll( Plugin plugin )
+    public synchronized void deleteByFilter( IndexerActionFilter filter, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_ALL, plugin );
+        List<String> listStrFilter = new ArrayList<String>( );
+
+        if ( filter.containsTask( ) )
+        {
+            listStrFilter.add( SQL_FILTER_ID_TASK );
+        }
+        String strSQL = buildRequestWithFilter( SQL_QUERY_DELETE_ALL, listStrFilter, null );
+        DAOUtil daoUtil = new DAOUtil( strSQL, plugin );
+        if ( filter.containsTask( ) )
+        {
+            daoUtil.setInt( 1, filter.getIndexerTask( ).getValue( ) );
+        }
         daoUtil.executeUpdate( );
         daoUtil.free( );
     }
-    
+
     /**
      * {@inheritDoc}
      */

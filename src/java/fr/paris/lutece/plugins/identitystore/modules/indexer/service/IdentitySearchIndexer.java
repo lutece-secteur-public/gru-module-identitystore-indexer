@@ -40,14 +40,12 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.document.Document;
 
-import fr.paris.lutece.plugins.identitystore.business.IdentityHome;
-import fr.paris.lutece.plugins.identitystore.modules.indexer.business.IndexerAction;
+import fr.paris.lutece.plugins.identitystore.modules.indexer.business.IndexerActionFilter;
 import fr.paris.lutece.plugins.identitystore.modules.indexer.business.IndexerActionHome;
 import fr.paris.lutece.plugins.identitystore.modules.indexer.business.IndexerTask;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.search.SearchIndexer;
-import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
 /**
@@ -113,9 +111,9 @@ public class IdentitySearchIndexer implements SearchIndexer
     @Override
     public void indexDocuments( )
     {
-        //First remove all indexer actions stored
-        IndexerActionHome.deleteAll( );
-        
+        // First remove all indexer actions stored - no filter
+        IndexerActionHome.deleteByFilter( new IndexerActionFilter( ) );
+
         // Then store all indetity in daemon indexer table
         IndexerActionHome.createAllByIdTask( IndexerTask.CREATE.getValue( ) );
     }

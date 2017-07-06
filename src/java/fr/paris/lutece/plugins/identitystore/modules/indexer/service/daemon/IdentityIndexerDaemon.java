@@ -48,6 +48,7 @@ import fr.paris.lutece.portal.service.daemon.Daemon;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import java.util.ArrayList;
 
 import java.util.List;
 
@@ -62,6 +63,7 @@ public class IdentityIndexerDaemon extends Daemon
     private static final String LOG_INDEX_DELETED = "Number of deleted indexes : ";
     private static final String LOG_END_OF_SENTENCE = ". ";
     private static final String APPLICATION_CODE = AppPropertiesService.getProperty( IdentityConstants.PROPERTY_APPLICATION_CODE );
+    private static final int PROPERTY_LIMIT_INDEXER_ACTION = AppPropertiesService.getPropertyInt( "identitystore-indexer.indexer.action.limit", -1 );
     private IndexService _indexService;
 
     /**
@@ -144,57 +146,81 @@ public class IdentityIndexerDaemon extends Daemon
         IndexerActionFilter indexerActionFilter = new IndexerActionFilter( );
         indexerActionFilter.setTask( indexerTask );
 
-        List<IndexerAction> listIndexerActions = IndexerActionHome.getList( indexerActionFilter );
+        List<IndexerAction> listIndexerActionFailed = new ArrayList<IndexerAction>( );
 
-        for ( IndexerAction indexerAction : listIndexerActions )
+        int nIndexerActionStart = 0;
+
+        boolean bContinue = true;
+
+        while ( bContinue )
         {
-            try
+            List<IndexerAction> listIndexerActions = IndexerActionHome.getListLimit( indexerActionFilter, nIndexerActionStart, PROPERTY_LIMIT_INDEXER_ACTION );
+
+            for ( IndexerAction indexerAction : listIndexerActions )
             {
-                Identity identity = IdentityStoreService.getIdentityByCustomerId( indexerAction.getCustomerId( ), APPLICATION_CODE );
-
-                IdentityChange identityChange = new IdentityChange( );
-
-                if ( identity == null )
+                try
                 {
-                    if ( indexerAction.getTask( ).getValue( ) == IndexerTask.DELETE.getValue( ) )
+                    Identity identity = IdentityStoreService.getIdentityByCustomerId( indexerAction.getCustomerId( ), APPLICATION_CODE );
+
+                    IdentityChange identityChange = new IdentityChange( );
+
+                    if ( identity == null )
                     {
-                        identity = new Identity( );
-                        identity.setCustomerId( indexerAction.getCustomerId( ) );
-                        identityChange.setIdentity( identity );
-                        identityChange.setChangeType( IdentityChangeType.valueOf( indexerAction.getTask( ).getValue( ) ) );
+                        if ( indexerAction.getTask( ).getValue( ) == IndexerTask.DELETE.getValue( ) )
+                        {
+                            identity = new Identity( );
+                            identity.setCustomerId( indexerAction.getCustomerId( ) );
+                            identityChange.setIdentity( identity );
+                            identityChange.setChangeType( IdentityChangeType.valueOf( indexerAction.getTask( ).getValue( ) ) );
+                        }
+                        else
+                        {
+                            listIndexerActionFailed.add( indexerAction );
+                            AppLogService.error( "Try to index the customer " + indexerAction.getCustomerId( ) + " already removed" );
+                        }
                     }
                     else
                     {
-                        IndexerActionHome.remove( indexerAction.getIdAction( ) );
-                        AppLogService.error( "Try to index the customer " + indexerAction.getCustomerId( ) + " already removed" );
+                        identityChange.setIdentity( identity );
+                        identityChange.setChangeType( IdentityChangeType.valueOf( indexerAction.getTask( ).getValue( ) ) );
+                    }
+
+                    if ( identity != null )
+                    {
+                        try
+                        {
+                            _indexService.process( identityChange );
+
+                            nNbIndexedIdentities++;
+                        }
+                        catch( IndexingException ex )
+                        {
+                            AppLogService.error( "Unable to index the customer id " + indexerAction.getCustomerId( ) + " : " + ex.getMessage( ) );
+                        }
                     }
                 }
-                else
+                catch( Exception e )
                 {
-                    identityChange.setIdentity( identity );
-                    identityChange.setChangeType( IdentityChangeType.valueOf( indexerAction.getTask( ).getValue( ) ) );
-                }
-
-                if ( identity != null )
-                {
-                    try
-                    {
-                        _indexService.process( identityChange );
-
-                        IndexerActionHome.remove( indexerAction.getIdAction( ) );
-
-                        nNbIndexedIdentities++;
-                    }
-                    catch( IndexingException ex )
-                    {
-                        AppLogService.error( "Unable to index the customer id " + indexerAction.getCustomerId( ) + " : " + ex.getMessage( ) );
-                    }
+                    AppLogService.error( "Unable to get the customer with id " + indexerAction.getCustomerId( ) + " : " + e.getMessage( ) );
                 }
             }
-            catch( Exception e )
+            if ( listIndexerActions.size( ) < PROPERTY_LIMIT_INDEXER_ACTION )
             {
-                AppLogService.error( "Unable to get the customer with id " + indexerAction.getCustomerId( ) + " : " + e.getMessage( ) );
+                bContinue = false;
             }
+            else
+            {
+                nIndexerActionStart += PROPERTY_LIMIT_INDEXER_ACTION;
+            }
+        }
+
+        IndexerActionFilter filter = new IndexerActionFilter( );
+        filter.setTask( indexerTask );
+        IndexerActionHome.deleteByFilter( filter );
+
+        for ( IndexerAction failedIndexerAction : listIndexerActionFailed )
+        {
+            IndexerActionHome.create( failedIndexerAction );
         }
 
         return nNbIndexedIdentities;

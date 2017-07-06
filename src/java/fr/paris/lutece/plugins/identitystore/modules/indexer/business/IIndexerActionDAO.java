@@ -90,23 +90,30 @@ public interface IIndexerActionDAO
      *            the search filter
      * @param plugin
      *            the plugin
+     * @param nStart
+     *            the start
+     * @param nLimit
+     *            the limit
      * @return The list which contains the data of all actions
      */
-    List<IndexerAction> selectList( IndexerActionFilter filter, Plugin plugin );
-    
+    List<IndexerAction> selectListLimit( IndexerActionFilter filter, int nStart, int nLimit, Plugin plugin );
+
     /**
-     * Delete all the indexer action
+     * Delete all the indexer action with given filter
+     * 
+     * @param filter
+     *            the filter
      * @param plugin
-     *             the plugin
+     *            the plugin
      */
-    void deleteAll( Plugin plugin );
-        
+    void deleteByFilter( IndexerActionFilter filter, Plugin plugin );
+
     /**
-     * Insert all the indexer action with given task id
+     * Insert all the indexer action with given task id 
      * @param nIdTask
-     *             the id task of indexer action to insert
+     *            the id task of indexer action to insert
      * @param plugin
-     *             the plugin
+     *            the plugin
      */
     void insertAllByIdTask( int nIdTask, Plugin plugin );
 }

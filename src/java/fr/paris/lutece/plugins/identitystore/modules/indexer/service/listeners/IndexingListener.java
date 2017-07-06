@@ -58,12 +58,18 @@ public class IndexingListener implements IdentityChangeListener
         _indexService = indexService;
     }
 
+    /**
+     * @{@inheritDoc
+     */
     @Override
     public String getName( )
     {
         return SERVICE_NAME;
     }
 
+    /**
+     * @{@inheritDoc
+     */
     @Override
     public void processIdentityChange( IdentityChange identityChange )
     {
@@ -79,7 +85,7 @@ public class IndexingListener implements IdentityChangeListener
             filter.setCustomerId( strIdCustomer );
             filter.setTask( IndexerTask.valueOf( identityChange.getChangeType( ).getValue( ) ) );
 
-            List<IndexerAction> listIndexerActions = IndexerActionHome.getList( filter );
+            List<IndexerAction> listIndexerActions = IndexerActionHome.getListLimit( filter, 0, -1 );
 
             if ( listIndexerActions.isEmpty( ) )
             {
