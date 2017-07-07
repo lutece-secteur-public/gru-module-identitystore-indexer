@@ -37,6 +37,7 @@ import fr.paris.lutece.plugins.grubusiness.business.customer.Customer;
 import fr.paris.lutece.plugins.grubusiness.business.indexing.IIndexingService;
 import fr.paris.lutece.plugins.grubusiness.business.indexing.IndexingException;
 import fr.paris.lutece.portal.service.util.AppLogService;
+import java.util.List;
 
 /**
  *
@@ -64,4 +65,13 @@ public class MockCustomerIndexingService implements IIndexingService<Customer>
         AppLogService.error( "Customer " + customer.getId( ) + " is not deleted from index, using MockCustomerIndexingService" );
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void indexList( List<Customer> listObjects ) throws IndexingException
+    {
+        // mock do nothing
+        AppLogService.error( "No bulk indexing, using MockCustomerIndexingService" );
+    }
 }

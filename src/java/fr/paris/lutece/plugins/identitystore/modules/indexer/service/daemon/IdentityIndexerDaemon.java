@@ -155,7 +155,8 @@ public class IdentityIndexerDaemon extends Daemon
         while ( bContinue )
         {
             List<IndexerAction> listIndexerActions = IndexerActionHome.getListLimit( indexerActionFilter, nIndexerActionStart, PROPERTY_LIMIT_INDEXER_ACTION );
-
+            
+            List<IdentityChange> listIdentityChange = new ArrayList<IdentityChange>();
             for ( IndexerAction indexerAction : listIndexerActions )
             {
                 try
@@ -187,16 +188,7 @@ public class IdentityIndexerDaemon extends Daemon
 
                     if ( identity != null )
                     {
-                        try
-                        {
-                            _indexService.process( identityChange );
-
-                            nNbIndexedIdentities++;
-                        }
-                        catch( IndexingException ex )
-                        {
-                            AppLogService.error( "Unable to index the customer id " + indexerAction.getCustomerId( ) + " : " + ex.getMessage( ) );
-                        }
+                            listIdentityChange.add( identityChange );
                     }
                 }
                 catch( Exception e )
@@ -204,6 +196,16 @@ public class IdentityIndexerDaemon extends Daemon
                     AppLogService.error( "Unable to get the customer with id " + indexerAction.getCustomerId( ) + " : " + e.getMessage( ) );
                 }
             }
+            try
+            {
+               _indexService.processList( listIdentityChange );
+               nNbIndexedIdentities += listIdentityChange.size( );
+            }
+            catch ( IndexingException e )
+            {
+                AppLogService.error( "Unable to process indexing of identities" , e );
+            }
+            
             if ( listIndexerActions.size( ) < PROPERTY_LIMIT_INDEXER_ACTION )
             {
                 bContinue = false;

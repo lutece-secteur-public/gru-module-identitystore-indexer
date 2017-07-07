@@ -44,6 +44,8 @@ import fr.paris.lutece.plugins.identitystore.business.IdentityConstants;
 import fr.paris.lutece.plugins.identitystore.service.IdentityChange;
 import fr.paris.lutece.plugins.identitystore.service.IdentityChangeType;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class represents a service for indexing
@@ -91,6 +93,30 @@ public class IndexService
                 deleteIndex( identityChange.getIdentity( ) );
             }
     }
+    
+    /**
+     * process list of identityChange for indexing them by list, or deleting one by one
+     * @param listIdentityChange
+     * @throws IndexingException 
+     */
+    public void processList( List<IdentityChange> listIdentityChange ) throws IndexingException
+    {
+        List<Identity> listIdentity = new ArrayList<Identity>();
+        for ( IdentityChange identityChange : listIdentityChange )
+        {
+            if ( ( identityChange.getChangeType( ).getValue( ) == IdentityChangeType.CREATE.getValue( ) )
+                || ( identityChange.getChangeType( ).getValue( ) == IdentityChangeType.UPDATE.getValue( ) ) )
+            {
+                listIdentity.add( identityChange.getIdentity( ) );
+            }
+            else if ( identityChange.getChangeType( ).getValue( ) == IdentityChangeType.DELETE.getValue( ) )
+            {
+                deleteIndex( identityChange.getIdentity( ) );
+            }
+        }
+        
+        indexList( listIdentity );
+    }
 
     /**
      * {@inheritDoc }.
@@ -105,6 +131,22 @@ public class IndexService
         Customer customer = buildCustomer( identity );
 
         _customerIndexService.index( customer );
+    }
+    
+    /**
+     * Process indexation of list of customers
+     * @param listIdentity the list of identities
+     * @throws IndexingException 
+     */
+    public void indexList( List<Identity> listIdentity ) throws IndexingException
+    {
+        List<Customer> listCustomer = new ArrayList<Customer>();
+        for ( Identity identity : listIdentity )
+        {
+            Customer customer = buildCustomer( identity );
+            listCustomer.add( customer );
+        }
+        _customerIndexService.indexList( listCustomer );
     }
 
     /**
