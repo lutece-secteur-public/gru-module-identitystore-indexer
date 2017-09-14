@@ -1,11 +1,11 @@
+![](http://dev.lutece.paris.fr/jenkins/buildStatus/icon?job=gru-module-identitystore-indexer-deploy)
+# Module IdentityStore Indexer
 
-#Module IdentityStore Indexer
-
-##Introduction
+## Introduction
 
 This module indexes identities.
 
-##Configuration
+## Configuration
 
 In order to index the identity, the service provider set in the property `identitystore.application.code` (from the plugin `gru-plugin-identitystore` ) must have the read right for the attributes set in the following properties (from the plugin `gru-plugin-identitystore` ):
  
