@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document>
+    <properties>
+        <title>Module IdentityStore Indexer</title>
+    </properties>
+    <body>
+        <section name="Module IdentityStore Indexer">
+            <subsection name="Introduction">
+                <p>
+                    This module indexes identities.
+                </p>
+            </subsection>
+            <subsection name="Configuration">
+                <p>
+                    In order to index the identity, the service provider set in the property <code>identitystore.application.code</code> (from the plugin <code>gru-plugin-identitystore</code>) must have the read right
+                    for the attributes set in the following properties (from the plugin <code>gru-plugin-identitystore</code>):
+                    <ul>
+                        <li>identitystore.identity.attribute.user.gender</li>
+                        <li>identitystore.identity.attribute.user.name.given</li>
+                        <li>identitystore.identity.attribute.user.name.preferred-username</li>
+                        <li>identitystore.identity.attribute.user.name.family.name</li>
+                        <li>identitystore.identity.attribute.user.home-info.online.email</li>
+                        <li>identitystore.identity.attribute.user.home-info.telecom.telephone.number</li>
+                        <li>identitystore.identity.attribute.user.home-info.telecom.mobile.number</li>
+                        <li>identitystore.identity.attribute.user.bdate</li>
+                    </ul>
+                </p>
+            </subsection>
+        </section>
+    </body>
+</document>
