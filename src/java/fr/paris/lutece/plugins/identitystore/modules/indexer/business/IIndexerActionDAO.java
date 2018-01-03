@@ -109,7 +109,8 @@ public interface IIndexerActionDAO
     void deleteByFilter( IndexerActionFilter filter, Plugin plugin );
 
     /**
-     * Insert all the indexer action with given task id 
+     * Insert all the indexer action with given task id
+     * 
      * @param nIdTask
      *            the id task of indexer action to insert
      * @param plugin

@@ -65,7 +65,8 @@ public class IndexService
     private static final String ATTRIBUTE_IDENTITY_USER_HOMEINFO_TELECOM_MOBILE_NUMBER = AppPropertiesService
             .getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_HOMEINFO_TELECOM_MOBILE_NUMBER );
     private static final String ATTRIBUTE_IDENTITY_USER_BDATE = AppPropertiesService.getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_BDATE );
-    private static final String ATTRIBUTE_IDENTITY_USER_NAME_FAMILY_NAME = AppPropertiesService.getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_FAMILY_NAME );
+    private static final String ATTRIBUTE_IDENTITY_USER_NAME_FAMILY_NAME = AppPropertiesService
+            .getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_FAMILY_NAME );
 
     private IIndexingService<Customer> _customerIndexService;
 
@@ -93,28 +94,30 @@ public class IndexService
                 deleteIndex( identityChange.getIdentity( ) );
             }
     }
-    
+
     /**
      * process list of identityChange for indexing them by list, or deleting one by one
+     * 
      * @param listIdentityChange
-     * @throws IndexingException 
+     * @throws IndexingException
      */
     public void processList( List<IdentityChange> listIdentityChange ) throws IndexingException
     {
-        List<Identity> listIdentity = new ArrayList<Identity>();
+        List<Identity> listIdentity = new ArrayList<Identity>( );
         for ( IdentityChange identityChange : listIdentityChange )
         {
             if ( ( identityChange.getChangeType( ).getValue( ) == IdentityChangeType.CREATE.getValue( ) )
-                || ( identityChange.getChangeType( ).getValue( ) == IdentityChangeType.UPDATE.getValue( ) ) )
+                    || ( identityChange.getChangeType( ).getValue( ) == IdentityChangeType.UPDATE.getValue( ) ) )
             {
                 listIdentity.add( identityChange.getIdentity( ) );
             }
-            else if ( identityChange.getChangeType( ).getValue( ) == IdentityChangeType.DELETE.getValue( ) )
-            {
-                deleteIndex( identityChange.getIdentity( ) );
-            }
+            else
+                if ( identityChange.getChangeType( ).getValue( ) == IdentityChangeType.DELETE.getValue( ) )
+                {
+                    deleteIndex( identityChange.getIdentity( ) );
+                }
         }
-        
+
         indexList( listIdentity );
     }
 
@@ -132,15 +135,17 @@ public class IndexService
 
         _customerIndexService.index( customer );
     }
-    
+
     /**
      * Process indexation of list of customers
-     * @param listIdentity the list of identities
-     * @throws IndexingException 
+     * 
+     * @param listIdentity
+     *            the list of identities
+     * @throws IndexingException
      */
     public void indexList( List<Identity> listIdentity ) throws IndexingException
     {
-        List<Customer> listCustomer = new ArrayList<Customer>();
+        List<Customer> listCustomer = new ArrayList<Customer>( );
         for ( Identity identity : listIdentity )
         {
             Customer customer = buildCustomer( identity );
@@ -237,7 +242,6 @@ public class IndexService
                 customer.addAttributes( strKeyName, getAttributeValue( attribute ) );
             }
 
-            
         }
 
         return customer;
