@@ -178,10 +178,7 @@ public final class IndexerActionDAO implements IIndexerActionDAO
         boolean bLimit = ( nLimit != -1 );
         if ( bLimit )
         {
-            StringBuffer stringBuffer = new StringBuffer( );
-            stringBuffer.append( strSQL );
-            stringBuffer.append( SQL_LIMIT );
-            strSQL = stringBuffer.toString( );
+            strSQL = new StringBuffer( strSQL ).append( SQL_LIMIT ).toString( );
         }
 
         DAOUtil daoUtil = new DAOUtil( strSQL, plugin );

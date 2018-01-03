@@ -53,6 +53,12 @@ public class IndexingListener implements IdentityChangeListener
     private static final String SERVICE_NAME = "Identity indexing listener";
     private IndexService _indexService;
 
+    /**
+     * Sets the index service to use
+     * 
+     * @param indexService
+     *            the index service
+     */
     public void setIndexService( IndexService indexService )
     {
         _indexService = indexService;

@@ -70,6 +70,12 @@ public class IndexService
 
     private IIndexingService<Customer> _customerIndexService;
 
+    /**
+     * Sets the customer index service to use
+     * 
+     * @param customerIndexService
+     *            the customer index service
+     */
     public void setCustomerIndexService( IIndexingService<Customer> customerIndexService )
     {
         _customerIndexService = customerIndexService;
@@ -80,6 +86,8 @@ public class IndexService
      *
      * @param identityChange
      *            The identity change
+     * @throws IndexingException
+     *             if there is an exception during the indexing
      */
     public void process( IdentityChange identityChange ) throws IndexingException
     {
@@ -96,10 +104,12 @@ public class IndexService
     }
 
     /**
-     * process list of identityChange for indexing them by list, or deleting one by one
+     * process list of {@code IdentityChange} objects for indexing them by list, or deleting one by one
      * 
      * @param listIdentityChange
+     *            the list of {@code IdentityChange} objects
      * @throws IndexingException
+     *             if there is an exception during the indexing
      */
     public void processList( List<IdentityChange> listIdentityChange ) throws IndexingException
     {
@@ -142,6 +152,7 @@ public class IndexService
      * @param listIdentity
      *            the list of identities
      * @throws IndexingException
+     *             if there is an exception during the indexing
      */
     public void indexList( List<Identity> listIdentity ) throws IndexingException
     {

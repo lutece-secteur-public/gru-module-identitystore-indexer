@@ -64,7 +64,7 @@ public class IdentityIndexerDaemon extends Daemon
     private static final String LOG_END_OF_SENTENCE = ". ";
     private static final String APPLICATION_CODE = AppPropertiesService.getProperty( IdentityConstants.PROPERTY_APPLICATION_CODE );
     private static final int PROPERTY_LIMIT_INDEXER_ACTION = AppPropertiesService.getPropertyInt( "identitystore-indexer.indexer.action.limit", -1 );
-    private IndexService _indexService;
+    private final IndexService _indexService;
 
     /**
      * Constructor
