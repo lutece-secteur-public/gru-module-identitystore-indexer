@@ -183,46 +183,58 @@ public class IndexService
 
             for ( IdentityAttribute attribute : identity.getAttributes( ).values( ) )
             {
-                if ( ATTRIBUTE_IDENTITY_USER_GENDER.equals( attribute.getAttributeKey( ).getKeyName( ) ) )
+                String strKeyName = attribute.getAttributeKey( ).getKeyName( );
+
+                if ( ATTRIBUTE_IDENTITY_USER_GENDER.equals( strKeyName ) )
                 {
                     String strGender = getAttributeValue( attribute );
                     customer.setIdTitle( StringUtils.isBlank( strGender ) || !StringUtils.isNumeric( strGender ) ? 0 : Integer.parseInt( strGender ) );
+                    continue;
                 }
 
-                if ( ATTRIBUTE_IDENTITY_USER_NAME_GIVEN.equals( attribute.getAttributeKey( ).getKeyName( ) ) )
+                if ( ATTRIBUTE_IDENTITY_USER_NAME_GIVEN.equals( strKeyName ) )
                 {
                     customer.setFirstname( getAttributeValue( attribute ) );
+                    continue;
                 }
 
-                if ( ATTRIBUTE_IDENTITY_USER_NAME_PREFERRED_NAME.equals( attribute.getAttributeKey( ).getKeyName( ) ) )
+                if ( ATTRIBUTE_IDENTITY_USER_NAME_PREFERRED_NAME.equals( strKeyName ) )
                 {
                     customer.setLastname( getAttributeValue( attribute ) );
+                    continue;
                 }
 
-                if ( ATTRIBUTE_IDENTITY_USER_NAME_FAMILY_NAME.equals( attribute.getAttributeKey( ).getKeyName( ) ) )
+                if ( ATTRIBUTE_IDENTITY_USER_NAME_FAMILY_NAME.equals( strKeyName ) )
                 {
                     customer.setFamilyname( getAttributeValue( attribute ) );
+                    continue;
                 }
 
-                if ( ATTRIBUTE_IDENTITY_USER_HOMEINFO_ONLINE_EMAIL.equals( attribute.getAttributeKey( ).getKeyName( ) ) )
+                if ( ATTRIBUTE_IDENTITY_USER_HOMEINFO_ONLINE_EMAIL.equals( strKeyName ) )
                 {
                     customer.setEmail( getAttributeValue( attribute ) );
+                    continue;
                 }
 
-                if ( ATTRIBUTE_IDENTITY_USER_HOMEINFO_TELECOM_TELEPHONE_NUMBER.equals( attribute.getAttributeKey( ).getKeyName( ) ) )
+                if ( ATTRIBUTE_IDENTITY_USER_HOMEINFO_TELECOM_TELEPHONE_NUMBER.equals( strKeyName ) )
                 {
                     customer.setFixedPhoneNumber( getAttributeValue( attribute ) );
+                    continue;
                 }
 
-                if ( ATTRIBUTE_IDENTITY_USER_HOMEINFO_TELECOM_MOBILE_NUMBER.equals( attribute.getAttributeKey( ).getKeyName( ) ) )
+                if ( ATTRIBUTE_IDENTITY_USER_HOMEINFO_TELECOM_MOBILE_NUMBER.equals( strKeyName ) )
                 {
                     customer.setMobilePhone( getAttributeValue( attribute ) );
+                    continue;
                 }
 
-                if ( ATTRIBUTE_IDENTITY_USER_BDATE.equals( attribute.getAttributeKey( ).getKeyName( ) ) )
+                if ( ATTRIBUTE_IDENTITY_USER_BDATE.equals( strKeyName ) )
                 {
                     customer.setBirthDate( getAttributeValue( attribute ) );
+                    continue;
                 }
+
+                customer.addAttributes( strKeyName, getAttributeValue( attribute ) );
             }
 
             
