@@ -48,12 +48,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class represents a service for indexing
+ * This class represents represents a service to index identities
  */
-public class IndexService
+public class IdentityIndexerService implements IIdentityIndexerService
 {
-    public static final String BEAN_NAME = "identitystore-indexer.indexService";
-
     private static final String ATTRIBUTE_IDENTITY_USER_GENDER = AppPropertiesService.getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_GENDER );
     private static final String ATTRIBUTE_IDENTITY_USER_NAME_GIVEN = AppPropertiesService.getProperty( IdentityConstants.PROPERTY_ATTRIBUTE_USER_NAME_GIVEN );
     private static final String ATTRIBUTE_IDENTITY_USER_NAME_PREFERRED_NAME = AppPropertiesService
@@ -82,14 +80,10 @@ public class IndexService
     }
 
     /**
-     * Indexes the identity change
-     *
-     * @param identityChange
-     *            The identity change
-     * @throws IndexingException
-     *             if there is an exception during the indexing
+     * {@inheritDoc}
      */
-    public void process( IdentityChange identityChange ) throws IndexingException
+    @Override
+    public void index( IdentityChange identityChange ) throws IndexingException
     {
         if ( ( identityChange.getChangeType( ).getValue( ) == IdentityChangeType.CREATE.getValue( ) )
                 || ( identityChange.getChangeType( ).getValue( ) == IdentityChangeType.UPDATE.getValue( ) ) )
@@ -104,14 +98,10 @@ public class IndexService
     }
 
     /**
-     * process list of {@code IdentityChange} objects for indexing them by list, or deleting one by one
-     * 
-     * @param listIdentityChange
-     *            the list of {@code IdentityChange} objects
-     * @throws IndexingException
-     *             if there is an exception during the indexing
+     * {@inheritDoc}
      */
-    public void processList( List<IdentityChange> listIdentityChange ) throws IndexingException
+    @Override
+    public void index( List<IdentityChange> listIdentityChange ) throws IndexingException
     {
         List<Identity> listIdentity = new ArrayList<Identity>( );
         for ( IdentityChange identityChange : listIdentityChange )
@@ -128,18 +118,18 @@ public class IndexService
                 }
         }
 
-        indexList( listIdentity );
+        indexIdentities( listIdentity );
     }
 
     /**
-     * {@inheritDoc }.
+     * Indexes the specified identity
      *
      * @param identity
-     *            the identity
+     *            the identity to index
      * @throws IndexingException
-     *             indexing exception
+     *             if there is an exception during the indexing
      * */
-    public void index( Identity identity ) throws IndexingException
+    private void index( Identity identity ) throws IndexingException
     {
         Customer customer = buildCustomer( identity );
 
@@ -147,14 +137,14 @@ public class IndexService
     }
 
     /**
-     * Process indexation of list of customers
+     * Indexes of list of identities
      * 
      * @param listIdentity
-     *            the list of identities
+     *            the list of identities to index
      * @throws IndexingException
      *             if there is an exception during the indexing
      */
-    public void indexList( List<Identity> listIdentity ) throws IndexingException
+    private void indexIdentities( List<Identity> listIdentity ) throws IndexingException
     {
         List<Customer> listCustomer = new ArrayList<Customer>( );
         for ( Identity identity : listIdentity )
@@ -166,14 +156,15 @@ public class IndexService
     }
 
     /**
-     * {@inheritDoc }.
+     * Deletes the index for the specified identity
      *
      * @param identity
      *            the identity
      * @throws IndexingException
      *             indexing exception
-     * */
-    public void deleteIndex( Identity identity ) throws IndexingException
+     *
+     */
+    private void deleteIndex( Identity identity ) throws IndexingException
     {
         Customer customer = buildCustomer( identity );
 
@@ -268,5 +259,14 @@ public class IndexService
     private String getAttributeValue( IdentityAttribute identityAttribute )
     {
         return ( identityAttribute.getValue( ) == null ) ? StringUtils.EMPTY : identityAttribute.getValue( );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deleteAllIndexes( ) throws IndexingException
+    {
+        _customerIndexService.deleteAllIndexes( );
     }
 }

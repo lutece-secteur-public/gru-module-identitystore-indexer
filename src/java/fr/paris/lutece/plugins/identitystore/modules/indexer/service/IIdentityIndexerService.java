@@ -31,57 +31,46 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.identitystore.modules.indexer.service.mock;
+package fr.paris.lutece.plugins.identitystore.modules.indexer.service;
 
-import fr.paris.lutece.plugins.grubusiness.business.customer.Customer;
-import fr.paris.lutece.plugins.grubusiness.business.indexing.IIndexingService;
-import fr.paris.lutece.plugins.grubusiness.business.indexing.IndexingException;
-import fr.paris.lutece.portal.service.util.AppLogService;
 import java.util.List;
 
+import fr.paris.lutece.plugins.grubusiness.business.indexing.IndexingException;
+import fr.paris.lutece.plugins.identitystore.service.IdentityChange;
+
 /**
+ * This interface represents a service to index identities
  *
  */
-public class MockCustomerIndexingService implements IIndexingService<Customer>
+public interface IIdentityIndexerService
 {
+    String BEAN_NAME = "identitystore-indexer.indexService";
 
     /**
-     * {@inheritDoc}
+     * Indexes the identity change
+     *
+     * @param identityChange
+     *            The identity change to index
+     * @throws IndexingException
+     *             if there is an exception during the indexing
      */
-    @Override
-    public void index( Customer customer ) throws IndexingException
-    {
-        // mock do nothing
-        AppLogService.error( "Customer " + customer.getId( ) + " is not indexed, using MockCustomerIndexingService" );
-    }
+    void index( IdentityChange identityChange ) throws IndexingException;
 
     /**
-     * {@inheritDoc}
+     * Indexes a list of identity changes
+     * 
+     * @param listIdentityChange
+     *            the list of identity changes to index
+     * @throws IndexingException
+     *             if there is an exception during the indexing
      */
-    @Override
-    public void deleteIndex( Customer customer ) throws IndexingException
-    {
-        // mock do nothing
-        AppLogService.error( "Customer " + customer.getId( ) + " is not deleted from index, using MockCustomerIndexingService" );
-    }
+    void index( List<IdentityChange> listIdentityChange ) throws IndexingException;
 
     /**
-     * {@inheritDoc}
+     * Deletes the index for all the identity changes
+     * 
+     * @throws IndexingException
+     *             if there is an exception during the deletion
      */
-    @Override
-    public void indexList( List<Customer> listObjects ) throws IndexingException
-    {
-        // mock do nothing
-        AppLogService.error( "No bulk indexing, using MockCustomerIndexingService" );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void deleteAllIndexes( ) throws IndexingException
-    {
-        // mock do nothing
-        AppLogService.error( "No index deleted, using MockCustomerIndexingService" );
-    }
+    void deleteAllIndexes( ) throws IndexingException;
 }

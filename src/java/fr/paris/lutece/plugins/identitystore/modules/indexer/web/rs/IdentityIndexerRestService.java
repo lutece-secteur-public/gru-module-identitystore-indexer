@@ -31,76 +31,76 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.identitystore.modules.indexer.service.listeners;
+package fr.paris.lutece.plugins.identitystore.modules.indexer.web.rs;
+
+import javax.inject.Inject;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import fr.paris.lutece.plugins.grubusiness.business.indexing.IndexingException;
-import fr.paris.lutece.plugins.identitystore.modules.indexer.business.IndexerAction;
 import fr.paris.lutece.plugins.identitystore.modules.indexer.business.IndexerActionFilter;
 import fr.paris.lutece.plugins.identitystore.modules.indexer.business.IndexerActionHome;
 import fr.paris.lutece.plugins.identitystore.modules.indexer.business.IndexerTask;
 import fr.paris.lutece.plugins.identitystore.modules.indexer.service.IIdentityIndexerService;
-import fr.paris.lutece.plugins.identitystore.service.IdentityChange;
-import fr.paris.lutece.plugins.identitystore.service.IdentityChangeListener;
-
-import java.util.List;
+import fr.paris.lutece.plugins.rest.service.RestConstants;
 
 /**
- * This class is a listener for indexing an identity when a attribute changes
+ * This class is a Web service to index identities
  *
  */
-public class IndexingListener implements IdentityChangeListener
+@Path( RestConstants.BASE_PATH + IdentityIndexerRestService.PLUGIN_PATH + IdentityIndexerRestService.INDEXING_PATH )
+public class IdentityIndexerRestService
 {
-    private static final String SERVICE_NAME = "Identity indexing listener";
-    private IIdentityIndexerService _indexService;
+    protected static final String PLUGIN_PATH = "identitystoreindexer";
+    protected static final String INDEXING_PATH = "/indexing";
+    protected static final String FULL_INDEXING_PATH = "/full";
+
+    private final IIdentityIndexerService _identityIndexerService;
 
     /**
-     * Sets the index service to use
+     * Constructor
      * 
-     * @param indexService
-     *            the index service
+     * @param identityIndexerService
+     *            the identity indexer service
      */
-    public void setIndexService( IIdentityIndexerService indexService )
+    @Inject
+    public IdentityIndexerRestService( IIdentityIndexerService identityIndexerService )
     {
-        _indexService = indexService;
+        _identityIndexerService = identityIndexerService;
     }
 
     /**
-     * @{@inheritDoc
+     * Performs a full indexing
+     * 
+     * @return a response with HTTP code 200 if there is no error during the full indexing, a response with HTTP code 500 otherwise.
      */
-    @Override
-    public String getName( )
+    @POST
+    @Path( FULL_INDEXING_PATH )
+    public Response fullIndexing( )
     {
-        return SERVICE_NAME;
-    }
+        Response response = Response.ok( ).build( );
 
-    /**
-     * @{@inheritDoc
-     */
-    @Override
-    public void processIdentityChange( IdentityChange identityChange )
-    {
         try
         {
-            _indexService.index( identityChange );
+            // First, remove the index for all identities
+            _identityIndexerService.deleteAllIndexes( );
+
+            // Then remove all indexer actions stored - no filter
+            IndexerActionHome.deleteByFilter( new IndexerActionFilter( ) );
+
+            // Then store all identities in daemon indexer table
+            IndexerActionHome.createAllByIdTask( IndexerTask.CREATE.getValue( ) );
+
         }
-        catch( IndexingException ex )
+        catch( IndexingException e )
         {
-            String strIdCustomer = identityChange.getIdentity( ).getCustomerId( );
-
-            IndexerActionFilter filter = new IndexerActionFilter( );
-            filter.setCustomerId( strIdCustomer );
-            filter.setTask( IndexerTask.valueOf( identityChange.getChangeType( ).getValue( ) ) );
-
-            List<IndexerAction> listIndexerActions = IndexerActionHome.getListLimit( filter, 0, -1 );
-
-            if ( listIndexerActions.isEmpty( ) )
-            {
-                IndexerAction indexerAction = new IndexerAction( );
-                indexerAction.setCustomerId( strIdCustomer );
-                indexerAction.setTask( IndexerTask.valueOf( identityChange.getChangeType( ).getValue( ) ) );
-
-                IndexerActionHome.create( indexerAction );
-            }
+            response = Response.status( Status.INTERNAL_SERVER_ERROR ).type( MediaType.TEXT_PLAIN ).entity( "An error occurred during the full indexing" )
+                    .build( );
         }
+
+        return response;
     }
 }

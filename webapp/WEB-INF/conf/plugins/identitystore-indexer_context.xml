@@ -17,7 +17,7 @@
     <!-- Index Service -->
     <!-- MUST BE OVERRIDE -->
     <bean id="identitystore-indexer.mockCustomerIndexer" class="fr.paris.lutece.plugins.identitystore.modules.indexer.service.mock.MockCustomerIndexingService" />
-    <bean id="identitystore-indexer.indexService" class="fr.paris.lutece.plugins.identitystore.modules.indexer.service.IndexService">
+    <bean id="identitystore-indexer.indexService" class="fr.paris.lutece.plugins.identitystore.modules.indexer.service.IdentityIndexerService">
         <property name="customerIndexService" ref="identitystore-indexer.mockCustomerIndexer"/>
     </bean>
 
@@ -25,4 +25,5 @@
 	<bean id="identitystore-indexer.listener.indexer" class="fr.paris.lutece.plugins.identitystore.modules.indexer.service.listeners.IndexingListener" >
         <property name="indexService" ref="identitystore-indexer.indexService" />
     </bean>
+    <bean id="identitystore-indexer.identityIndexerRestService"  class="fr.paris.lutece.plugins.identitystore.modules.indexer.web.rs.IdentityIndexerRestService" />
 </beans>

@@ -40,7 +40,7 @@ import fr.paris.lutece.plugins.identitystore.modules.indexer.business.IndexerAct
 import fr.paris.lutece.plugins.identitystore.modules.indexer.business.IndexerActionFilter;
 import fr.paris.lutece.plugins.identitystore.modules.indexer.business.IndexerActionHome;
 import fr.paris.lutece.plugins.identitystore.modules.indexer.business.IndexerTask;
-import fr.paris.lutece.plugins.identitystore.modules.indexer.service.IndexService;
+import fr.paris.lutece.plugins.identitystore.modules.indexer.service.IIdentityIndexerService;
 import fr.paris.lutece.plugins.identitystore.service.IdentityChange;
 import fr.paris.lutece.plugins.identitystore.service.IdentityChangeType;
 import fr.paris.lutece.plugins.identitystore.service.IdentityStoreService;
@@ -64,7 +64,7 @@ public class IdentityIndexerDaemon extends Daemon
     private static final String LOG_END_OF_SENTENCE = ". ";
     private static final String APPLICATION_CODE = AppPropertiesService.getProperty( IdentityConstants.PROPERTY_APPLICATION_CODE );
     private static final int PROPERTY_LIMIT_INDEXER_ACTION = AppPropertiesService.getPropertyInt( "identitystore-indexer.indexer.action.limit", -1 );
-    private final IndexService _indexService;
+    private final IIdentityIndexerService _indexService;
 
     /**
      * Constructor
@@ -72,7 +72,7 @@ public class IdentityIndexerDaemon extends Daemon
     public IdentityIndexerDaemon( )
     {
         super( );
-        _indexService = SpringContextService.getBean( IndexService.BEAN_NAME );
+        _indexService = SpringContextService.getBean( IIdentityIndexerService.BEAN_NAME );
     }
 
     /**
@@ -198,7 +198,7 @@ public class IdentityIndexerDaemon extends Daemon
             }
             try
             {
-                _indexService.processList( listIdentityChange );
+                _indexService.index( listIdentityChange );
                 nNbIndexedIdentities += listIdentityChange.size( );
             }
             catch( IndexingException e )
