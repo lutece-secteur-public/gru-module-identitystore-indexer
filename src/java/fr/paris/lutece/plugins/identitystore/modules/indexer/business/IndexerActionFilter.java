@@ -33,7 +33,7 @@
  */
 package fr.paris.lutece.plugins.identitystore.modules.indexer.business;
 
-import fr.paris.lutece.plugins.identitystore.web.rs.service.Constants;
+import org.apache.commons.lang.StringUtils;
 
 /**
  *
@@ -46,8 +46,10 @@ public class IndexerActionFilter
      * Represents any integer
      */
     public static final int ALL_INT = -1;
+    public static final String NO_CUSTOMER_ID = StringUtils.EMPTY;
+
     private IndexerTask _indexerTask = IndexerTask.ALL;
-    private String _strCustomerId = Constants.NO_CUSTOMER_ID;
+    private String _strCustomerId = NO_CUSTOMER_ID;
 
     /**
      * Gets the indexer task
@@ -108,6 +110,6 @@ public class IndexerActionFilter
      */
     public boolean containsCustomerId( )
     {
-        return ( !Constants.NO_CUSTOMER_ID.equals( _strCustomerId ) );
+        return ( !NO_CUSTOMER_ID.equals( _strCustomerId ) );
     }
 }
