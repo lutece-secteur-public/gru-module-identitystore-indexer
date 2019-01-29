@@ -10,7 +10,7 @@
     <groupId>fr.paris.lutece.plugins</groupId>
     <artifactId>module-identitystore-indexer</artifactId>
     <packaging>lutece-plugin</packaging>
-    <version>1.2.6-SNAPSHOT</version>
+    <version>1.2.6</version>
     <name>Lutece IdentityStore indexer module</name>
 
     <repositories>
@@ -59,7 +59,7 @@
         <connection>scm:git:https://github.com/lutece-secteur-public/gru-module-identitystore-indexer.git</connection>
         <developerConnection>scm:git:https://github.com/lutece-secteur-public/gru-module-identitystore-indexer.git</developerConnection>
         <url>https://github.com/lutece-secteur-public/gru-module-identitystore-indexer.git</url>
-        <tag>HEAD</tag>
+        <tag>module-identitystore-indexer-1.2.6</tag>
     </scm>
     
 </project>
